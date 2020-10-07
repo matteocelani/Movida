@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="MovidaCore" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="movida.dalessandrocelani.MovidaCore" />
+    <module name="movida" />
+    <RunnerSettings RunnerId="Run" />
+    <ConfigurationWrapper RunnerId="Run" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
