@@ -29,7 +29,7 @@ import java.util.*;         //é grigia perche ancora non la utilizziamo!
  * ************************************************
  *  DATA ULTIMO TEST: MAI TESTATO
  *  BUILD:  java: missing return statement
- *  ************************************************
+ * ************************************************
 **/
 public class MovidaCore implements IMovidaDB {
     private DBUtils dbutils;
@@ -37,12 +37,31 @@ public class MovidaCore implements IMovidaDB {
     MovidaCore() {
         this.dbutils = new DBUtils();
     }
+
     //Carica i dati da un file, organizzato secondo il formato MOVIDA
     public void loadFromFile(File f) {
+        /**
+         * Carico i dati usando loadfilm()
+         * Controllo le informazioni presenti sul DB e inserisoc i dati:
+         *      • Se il titolo è già presente: elimino il film con lo stesso titolo e carico il nuovo (aggiornamento)
+         *      • Inserisco il cast e il direttore:
+         *              - Direttore: se il direttore non è presente lo inserisco
+         *              - Cast: controllo se la persona è già presente se è presente incremento il suo numero di film, altrimenti
+         *                se non è presente la inserisco
+         *      • Riempi il grafo delle collaborazioni
+         *
+         */
+        Movie[] mov = this.dbutils.loadFilm(f);
     }
 
     //Salva tutti i dati su un file.
     public void saveToFile(File f) {
+        /**
+         *  • Controllo i permessi --> Altrimenti eccezione
+         *  • Inizializzo il file .txt
+         *  • Inserisco i dati
+         *  • Se non si riesce a salvare --> eccezione
+         */
     }
 
     //Cancella tutti i dati.
