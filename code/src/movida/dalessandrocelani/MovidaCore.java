@@ -15,7 +15,7 @@ import java.util.*;         //é grigia perche ancora non la utilizziamo!
 /**
  * ************************************************
  * COMMENTI DA ELIMINARE ALLA CONSEGNA
- * ULTIMA MODIFICA: 27/10/2020
+ * ULTIMA MODIFICA: 02/11/2020
  * ************************************************
  * Finchè non si implementano tutte le classe in IMovidaDb il compilatore restituisce errore:
  * java: movida.dalessandrocelani.MovidaCore is not abstract and does not override abstract method getMovieByTitle(java.lang.String) in movida.commons.IMovidaDB
@@ -27,31 +27,71 @@ import java.util.*;         //é grigia perche ancora non la utilizziamo!
  * Implementare le funzioni presenti in IMovidaDB quindi di conseguenza implementare la classe DBUtils
  *
  * ************************************************
- *  DATA ULTIMO TEST: MAI TESTATO
- *  BUILD:  java: missing return statement
+ *  DATA ULTIMO TEST: 02/11/2020, FALLITO
+ *  BUILD: OK
  * ************************************************
 **/
 public class MovidaCore implements IMovidaDB {
+
     private DBUtils dbutils;
+    private HashMap<String, Movie> movies;
+    private HashMap<String, DetailPerson> people;
 
     MovidaCore() {
         this.dbutils = new DBUtils();
+        this.movies = new HashMap<String, Movie>();
+        this.people = new HashMap<String, DetailPerson>();
     }
 
     //Carica i dati da un file, organizzato secondo il formato MOVIDA
     public void loadFromFile(File f) {
         /**
-         * Carico i dati usando loadfilm()
          * Controllo le informazioni presenti sul DB e inserisoc i dati:
-         *      • Se il titolo è già presente: elimino il film con lo stesso titolo e carico il nuovo (aggiornamento)
-         *      • Inserisco il cast e il direttore:
-         *              - Direttore: se il direttore non è presente lo inserisco
-         *              - Cast: controllo se la persona è già presente se è presente incremento il suo numero di film, altrimenti
-         *                se non è presente la inserisco
          *      • Riempi il grafo delle collaborazioni
          *
          */
+
+        //Carico i dati usando loadFilm()
         Movie[] mov = this.dbutils.loadFilm(f);
+
+        for(Movie movie: mov) {
+
+            String title = movie.getTitle().toLowerCase().trim().replaceAll("\\s", "");
+
+            //Se il titolo è già presente: elimino il film con lo stesso titolo e carico il nuovo (aggiornamento)
+            /*if ( !this.movies.containsKey(title) ){
+                this.movies.remove(title);
+            }*/
+            this.movies.put(title, movie);
+
+            //Inserisco il cast e il direttore
+
+            //Direttore: se il direttore non è presente lo inserisco
+            String director = movie.getDirector().getName().trim();
+            if ( ! this.people.containsKey(director) ) {
+                this.people.put(director, new DetailPerson(director, 0, false));
+            }
+
+            //Cast: controllo se la persona è già presente se è presente incremento il suo numero di film, altrimenti se non è presente la inserisco
+            for (Person actor : movie.getCast()) {
+                String currentActor = actor.getName();
+                //Movie detailActor = this.people.get(currentActor);
+                if ( ! this.people.containsKey(currentActor) ) {
+                    this.people.put(currentActor, new DetailPerson(currentActor, 0, true));
+                }
+                else {
+                    this.people.get(currentActor).addMovie();
+                }
+            }
+        }
+
+    }
+
+    public void stampa(HashMap<String, Movie> films) {
+        for(Movie film: films.values()) {
+            System.out.println(film.getTitle());
+        }
+
     }
 
     //Salva tutti i dati su un file.
@@ -66,37 +106,48 @@ public class MovidaCore implements IMovidaDB {
 
     //Cancella tutti i dati.
     public void clear() {
+
     }
 
     //Restituisce il numero di film
     public int countMovies() {
+        return 0;
     }
 
     //Restituisce il numero di persone
     public int countPeople() {
+        return 0;
     }
 
     //Cancella il film con un dato titolo, se esiste.
     public boolean deleteMovieByTitle(String title) {
+        return true;
     }
 
     //Restituisce il record associato ad un film
     public Movie getMovieByTitle(String title){
+        return null;
     }
 
     //Restituisce il record associato ad una persona, attore o regista
     public Person getPersonByName(String name) {
+        return null;
     }
 
     //Restituisce il vettore di tutti i film
     public Movie[] getAllMovies() {
+        return null;
     }
 
     //Restituisce il vettore di tutte le persone
     public Person[] getAllPeople() {
+        return null;
     }
 
     public static void main(String[] args) {
+        MovidaCore prova = new MovidaCore();
         System.out.println("Hello, World!");
+        prova.loadFromFile(new File("../commons/esempio-formato-dati.txt"));
+        prova.stampa(prova.movies);
     }
 }

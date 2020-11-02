@@ -38,29 +38,29 @@ public class DBUtils {
         ArrayList<Movie> movies = new ArrayList<>();
 
         try {
-                Scanner sc = new Scanner(f);
-                //Scanerrizzo il file per righe fino alla fine
-                while (sc.hasNextLine()) {
-                    //Il file "dizionario" è organizzato per righe
-                    for (int i=0; i < 5 ; i++) {
-                        String row = sc.nextLine();         //Leggo il contenuto della riga
-                        if (!row.matches("(.*):(.*)")) {        //Controllo il contenuto della riga
-                            throw new MovidaFileException();          //MovidaFileException in caso di errore di caricamento
-                        }
-                        movieString[i] = row;           //Salvo le 5 righe nell'array creato in precedenza
+            Scanner sc = new Scanner(f);
+            //Scanerrizzo il file per righe fino alla fine
+            while (sc.hasNextLine()) {
+                //Il file "dizionario" è organizzato per righe
+                for (int i=0; i < 5 ; i++) {
+                    String row = sc.nextLine();         //Leggo il contenuto della riga
+                    if (!row.matches("(.*):(.*)")) {        //Controllo il contenuto della riga
+                        throw new MovidaFileException();          //MovidaFileException in caso di errore di caricamento
                     }
+                    movieString[i] = row;           //Salvo le 5 righe nell'array creato in precedenza
+                }
 
-                    Movie x = this.extractDetail(movieString);     //Estraggo i campi che ci interessano e popolo Movie
-                    movies.add(x);      //Aggiungo il film alla lista di Movie
+                Movie x = this.extractDetail(movieString);     //Estraggo i campi che ci interessano e popolo Movie
+                movies.add(x);      //Aggiungo il film alla lista di Movie
 
-                    //Controllo il separatore dopo i 5 valori inseriti
-                    if (sc.hasNextLine()) {     //Il documento non è concluso
-                        if (!sc.nextLine().trim().isEmpty()) {      //Controllo se la riga è vuota una volta eliminati gli spazi
-                            System.out.println("ATTENZIONE! Per separare un contentuto è possbile utilizzare solo spazi. ATTENZIONE!");
-                            throw new MovidaFileException();        //MovidaFileException in caso di errore di caricamento
-                        }
+                //Controllo il separatore dopo i 5 valori inseriti
+                if (sc.hasNextLine()) {     //Il documento non è concluso
+                    if (!sc.nextLine().trim().isEmpty()) {      //Controllo se la riga è vuota una volta eliminati gli spazi
+                        System.out.println("ATTENZIONE! Per separare un contentuto è possbile utilizzare solo spazi. ATTENZIONE!");
+                        throw new MovidaFileException();        //MovidaFileException in caso di errore di caricamento
                     }
                 }
+            }
 
         } catch (Exception e) {
             new MovidaFileException().getMessage();
