@@ -15,7 +15,7 @@ import java.util.*;
 /**
  * ************************************************
  * COMMENTI DA ELIMINARE ALLA CONSEGNA
- * ULTIMA MODIFICA: 02/11/2020
+ * ULTIMA MODIFICA: 09/11/2020
  * ************************************************
  * Finchè non si implementano tutte le classe in IMovidaDb il compilatore restituisce errore:
  * java: movida.dalessandrocelani.MovidaCore is not abstract and does not override abstract method getMovieByTitle(java.lang.String) in movida.commons.IMovidaDB
