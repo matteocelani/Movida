@@ -10,7 +10,7 @@ package movida.dalessandrocelani;
 import movida.commons.*;
 
 import java.io.*;
-import java.util.*;         //é grigia perche ancora non la utilizziamo!
+import java.util.*;
 
 /**
  * ************************************************
@@ -27,7 +27,7 @@ import java.util.*;         //é grigia perche ancora non la utilizziamo!
  * Implementare le funzioni presenti in IMovidaDB quindi di conseguenza implementare la classe DBUtils
  *
  * ************************************************
- *  DATA ULTIMO TEST: 02/11/2020, FALLITO
+ *  DATA ULTIMO TEST: 09/11/2020, OK
  *  BUILD: OK
  * ************************************************
 **/
@@ -46,18 +46,16 @@ public class MovidaCore implements IMovidaDB {
     //Carica i dati da un file, organizzato secondo il formato MOVIDA
     public void loadFromFile(File f) {
         /**
-         * Controllo le informazioni presenti sul DB e inserisoc i dati:
+         * Controllo le informazioni presenti sul DB e inserisco i dati:
          *      • Riempi il grafo delle collaborazioni
          *
          */
 
         //Carico i dati usando loadFilm()
         Movie[] mov = this.dbutils.loadFilm(f);
-
         for(Movie movie: mov) {
 
             String title = movie.getTitle().toLowerCase().trim().replaceAll("\\s", "");
-
             //Se il titolo è già presente: elimino il film con lo stesso titolo e carico il nuovo (aggiornamento)
             /*if ( !this.movies.containsKey(title) ){
                 this.movies.remove(title);
@@ -88,8 +86,16 @@ public class MovidaCore implements IMovidaDB {
     }
 
     public void stampa(HashMap<String, Movie> films) {
-        for(Movie film: films.values()) {
-            System.out.println(film.getTitle());
+        for (String film: films.keySet()){
+            String key = film;
+            Movie value = films.get(film);
+            Person[] cast = value.getCast();
+            Person direttore = value.getDirector();
+            System.out.println(key + " " + value.getTitle());
+            System.out.println(key + " " + value.getYear());
+            System.out.println(key + " " + cast[1].getName());
+            System.out.println(key + " " + direttore.getName());
+            System.out.println(key + " " + value.getVotes());
         }
 
     }
@@ -102,6 +108,8 @@ public class MovidaCore implements IMovidaDB {
          *  • Inserisco i dati
          *  • Se non si riesce a salvare --> eccezione
          */
+        Movie[] mov = this.movies.values().toArray(new Movie[0]);
+        this.dbutils.save(f, mov);
     }
 
     //Cancella tutti i dati.
@@ -147,7 +155,9 @@ public class MovidaCore implements IMovidaDB {
     public static void main(String[] args) {
         MovidaCore prova = new MovidaCore();
         System.out.println("Hello, World!");
-        prova.loadFromFile(new File("../commons/esempio-formato-dati.txt"));
+        prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
         prova.stampa(prova.movies);
+        prova.saveToFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
+        System.out.println("Hello, World!");
     }
 }

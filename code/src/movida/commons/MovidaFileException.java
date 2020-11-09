@@ -18,7 +18,5 @@ public class MovidaFileException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public String getMessage() {
-		return "Errore caricamento o salvataggio dati.";
-	}
+	public String getMessage() { return "Errore caricamento o salvataggio dati."; }
 }

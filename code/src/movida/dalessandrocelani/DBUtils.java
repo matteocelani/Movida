@@ -9,14 +9,15 @@
 package movida.dalessandrocelani;
 import movida.commons.*;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.io.FileWriter;
+import java.util.*;
 
 /**
  * ************************************************
  * COMMENTI DA ELIMINARE ALLA CONSEGNA
- * ULTIMA MODIFICA: 27/10/2020
+ * ULTIMA MODIFICA: 09/11/2020
  * ************************************************
  *  In questa classe ci occupiamo del caricamento dei dati da un file dizionario
  *  loadFilm() si occupa di ciò
@@ -26,7 +27,7 @@ import java.util.Scanner;
  *  restitutisce il DB appena creato
  *
  *  ************************************************
- *  DATA ULTIMO TEST: MAI TESTATO
+ *  DATA ULTIMO TEST: 09/11/2020, OK
  *  BUILD:  27/10/2020, 18:38 - Build completed successfully in 1 s 201 ms
  *  ************************************************
  **/
@@ -36,7 +37,6 @@ public class DBUtils {
     public Movie[] loadFilm (File f) {
         String[] movieString = new String[5];      //Contiene i 5 campi della classe Movie
         ArrayList<Movie> movies = new ArrayList<>();
-
         try {
             Scanner sc = new Scanner(f);
             //Scanerrizzo il file per righe fino alla fine
@@ -63,7 +63,7 @@ public class DBUtils {
             }
 
         } catch (Exception e) {
-            new MovidaFileException().getMessage();
+            System.out.println(e.getMessage());
         }
 
         Movie[] movieTot = new Movie[movies.size()];         //Creiamo una lista di Movie grande quanto i film trovati nel file
@@ -74,7 +74,7 @@ public class DBUtils {
     public  Movie extractDetail(String[] data){
         String[] contents = this.divideRow(data);       //Separo i contenuti e salvo in un array
 
-        String title = contents[0];
+        String title = contents[0].trim();
         Integer year = Integer.parseInt(contents[1].trim());
         Integer votes = Integer.parseInt(contents[4].trim());
         //I membri del casto possono essere più di uno, sono separati da una virgola
@@ -109,5 +109,34 @@ public class DBUtils {
         }
 
         return cast;    //Ritorno la singola persona che fa parte del cast
+    }
+
+    public void save(File f,Movie[] movies){
+            try {
+                if (movies.length != 0) {
+                    BufferedWriter bw = null;
+                    FileWriter fw = new FileWriter(f);
+                    bw = new BufferedWriter(fw);
+                    for (Movie movie : movies) {
+                        bw.write("Title: " + movie.getTitle());
+                        bw.newLine();
+                        bw.write("Year: " + movie.getYear().toString());
+                        bw.newLine();
+                        bw.write("Director: " + movie.getDirector().getName().trim());
+                        bw.newLine();
+                        bw.write("Cast: " + movie.getDetailCast());
+                        bw.newLine();
+                        bw.write("Votes: " + movie.getVotes().toString());
+                        bw.newLine();
+                        bw.newLine(); // Aggiungo una linea per separare i campi
+                    }
+                    bw.close();
+                    System.out.println("File written Successfully");
+                } else {
+                    throw new MovidaFileException();
+                }
+            } catch (Exception e){
+                System.out.println(e.getMessage());
+                }
     }
 }
