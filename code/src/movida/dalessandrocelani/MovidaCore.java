@@ -132,6 +132,20 @@ public class MovidaCore implements IMovidaDB {
 
     //Cancella il film con un dato titolo, se esiste.
     public boolean deleteMovieByTitle(String title) {
+        Movie tmp = this.movies.get(title);
+        if(tmp != null){
+            // Decremento il numero di film a cui ogni attore del cast ha partecipato
+            for(Person p : tmp.getCast()){
+                DetailPerson actor = this.people.get(p.getName());
+                actor.removeMovie();
+                if(actor.getNumMov()==0){
+                    this.people.remove(actor);
+                }
+            }
+            this.movies.remove(tmp.getTitle());
+            return true;
+        } else
+            return false;
     }
 
     //Restituisce il record associato ad un film
