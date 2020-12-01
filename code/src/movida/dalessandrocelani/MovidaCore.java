@@ -129,28 +129,20 @@ public class MovidaCore implements IMovidaDB {
 
     //Cancella il film con un dato titolo, se esiste.
     public boolean deleteMovieByTitle(String title) {
-        return true;
+        return false;
     }
 
     //Restituisce il record associato ad un film
-    public Movie getMovieByTitle(String title){
-        return null;
-    }
+    public Movie getMovieByTitle(String title){ return this.movies.get(title); }
 
     //Restituisce il record associato ad una persona, attore o regista
-    public Person getPersonByName(String name) {
-        return null;
-    }
+    public Person getPersonByName(String name) { return this.people.get(name); }
 
     //Restituisce il vettore di tutti i film
-    public Movie[] getAllMovies() {
-        return null;
-    }
+    public Movie[] getAllMovies() { return this.movies.values().toArray(new Movie[0]); }
 
     //Restituisce il vettore di tutte le persone
-    public Person[] getAllPeople() {
-        return null;
-    }
+    public Person[] getAllPeople() { return this.people.values().toArray(new Person[0]); }
 
     public static void main(String[] args) {
         MovidaCore prova = new MovidaCore();
