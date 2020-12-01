@@ -114,22 +114,38 @@ public class MovidaCore implements IMovidaDB {
 
     //Cancella tutti i dati.
     public void clear() {
-
+        this.dbutils = new DBUtils();
+        this.movies = new HashMap<>();
+        this.people = new HashMap<>();
+        //TODO: cambiare con nuove strutture dati implementate e aggiungere il reset del grafico
     }
 
     //Restituisce il numero di film
     public int countMovies() {
-        return 0;
+        return this.movies.values().toArray().length;
     }
 
     //Restituisce il numero di persone
     public int countPeople() {
-        return 0;
+        return this.people.values().size();
     }
 
     //Cancella il film con un dato titolo, se esiste.
     public boolean deleteMovieByTitle(String title) {
-        return true;
+        Movie tmp = this.movies.get(title);
+        if(tmp != null){
+            // Decremento il numero di film a cui ogni attore del cast ha partecipato
+            for(Person p : tmp.getCast()){
+                DetailPerson actor = this.people.get(p.getName());
+                actor.removeMovie();
+                if(actor.getNumMov()==0){
+                    this.people.remove(actor);
+                }
+            }
+            this.movies.remove(tmp.getTitle());
+            return true;
+        } else
+            return false;
     }
 
     //Restituisce il record associato ad un film
