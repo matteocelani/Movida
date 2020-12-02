@@ -15,17 +15,17 @@ import java.util.*;
 /**
  * ************************************************
  * COMMENTI DA ELIMINARE ALLA CONSEGNA
- * ULTIMA MODIFICA: 09/11/2020
+ * ULTIMA MODIFICA: 02/12/2020
  * ************************************************
  *
- * TODO: IMovidaSearch
+ * TODO: IMovidaSearch (50%)
  *
  * ************************************************
  *  DATA ULTIMO TEST: 02/12/2020, OK
  *  BUILD: OK
  * ************************************************
 **/
-public class MovidaCore implements IMovidaDB {
+public class MovidaCore implements IMovidaDB, IMovidaSearch {
 
     private DBUtils dbutils;
     private HashMap<String, Movie> movies;
@@ -152,30 +152,124 @@ public class MovidaCore implements IMovidaDB {
     //Restituisce il vettore di tutte le persone
     public Person[] getAllPeople() { return this.people.values().toArray(new Person[0]); }
 
+    //MOVIDA SEARCH
+    //Ricerca film per titolo.
+    @Override
+    public Movie[] searchMoviesByTitle(String title) {
+        ArrayList<Movie> x = new ArrayList<>();
+        Movie[] m = this.movies.values().toArray(new Movie[0]);
+        //Trasformo il titolo inserito
+        String low = title.toLowerCase().trim().replaceAll("\\s","");
+
+        for (Movie y: m){
+            //Trasformo il titolo selezionato
+            String ylow = y.getTitle().toLowerCase().trim().replaceAll("\\s","");
+
+            if(ylow.contains(low)){     //Se il film è stato trovato, lo aggiunge al vettore vuoto
+                x.add(y);
+            }
+        }
+        return x.toArray(new Movie[0]);
+    }
+
+    //Ricerca film per anno.
+    @Override
+    public Movie[] searchMoviesInYear(Integer year) {
+        ArrayList<Movie> x = new ArrayList<>();
+        Movie[] m = this.movies.values().toArray(new Movie[0]);
+
+        for (Movie y: m){
+            if(y.getYear().equals(year)){     //Se il film è stato trovato, lo aggiunge al vettore vuoto
+                x.add(y);
+            }
+        }
+        return x.toArray(new Movie[0]);
+    }
+
+    //Ricerca film per regista.
+    @Override
+    public Movie[] searchMoviesDirectedBy(String name) {
+        ArrayList<Movie> x = new ArrayList<>();
+        Movie[] m = this.movies.values().toArray(new Movie[0]);
+        //Trasformo il Regista inserito
+        String low = name.toLowerCase().trim().replaceAll("\\s","");
+
+        for (Movie y: m){
+            //Trasformo il Regista selezionato
+            String ylow = y.getDirector().getName().toLowerCase().trim().replaceAll("\\s","");
+
+            if(ylow.contains(low)){     //Se il film è stato trovato, lo aggiunge al vettore vuoto
+                x.add(y);
+            }
+        }
+        return x.toArray(new Movie[0]);
+    }
+
+    //Ricerca film per attore.
+    @Override
+    public Movie[] searchMoviesStarredBy(String name) {
+        return new Movie[0];
+    }
+
+    //Ricerca film più votati.
+    @Override
+    public Movie[] searchMostVotedMovies(Integer N) {
+        return new Movie[0];
+    }
+
+    //Ricerca film più recenti.
+    @Override
+    public Movie[] searchMostRecentMovies(Integer N) {
+        return new Movie[0];
+    }
+
+    //Ricerca gli attori più attivi.
+    @Override
+    public Person[] searchMostActiveActors(Integer N) {
+        return new Person[0];
+    }
+
     public static void main(String[] args) {
         MovidaCore prova = new MovidaCore();
-        System.out.println("Hello, World!");
+        System.out.println("Inizio");
         //Test lettura file
         prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
-        prova.stampa(prova.movies);
+        //prova.stampa(prova.movies);
+
         //Test getMovieByTitle()
         System.out.println(prova.getMovieByTitle("taxidriver").getTitle());
+
         //Test getPersonByName()
         System.out.println(prova.getPersonByName("Toni Collette").getName());
+
         //Test getAllMovies()
         System.out.println(prova.getAllMovies()[5].getTitle());
+
         //Test getAllPeople()
         System.out.println(prova.getAllPeople()[5].getName());
+
         //Test countMovies()
         System.out.println(prova.countMovies());
+
         //Test countPeople()
         System.out.println(prova.countPeople());
+
         //Test deleteMovieByTitle()
-        prova.deleteMovieByTitle("capefear");
-        System.out.println(prova.countMovies());
-        System.out.println(prova.countPeople());
+        //prova.deleteMovieByTitle("capefear");
+        //System.out.println(prova.countMovies());
+        //System.out.println(prova.countPeople());
+
+        //Test searchMoviesByTitle()
+        System.out.println(prova.searchMoviesByTitle("Die Hard")[0].getTitle());
+
+        //Test searchMoviesInYear()
+        System.out.println(prova.searchMoviesInYear(1993)[0].getTitle());
+
+        //Test searchMoviesDirectedBy()
+        System.out.println(prova.searchMoviesDirectedBy("Brian De Palma")[0].getTitle());
+
         //Test salva nuovo file
-        prova.saveToFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
-        System.out.println("Hello, World!");
+        //prova.saveToFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
+        System.out.println("Fine");
     }
 }
