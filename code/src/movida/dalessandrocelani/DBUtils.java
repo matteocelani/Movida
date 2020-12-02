@@ -25,9 +25,8 @@ import java.util.*;
  *  inizialmente separa i contentuti e cerca solo i campi che ci interessano
  *  salva i campi nell'array di tipo Movie
  *  restitutisce il DB appena creato
- *
  *  ************************************************
- *  DATA ULTIMO TEST: 09/11/2020, OK
+ *  DATA ULTIMO TEST: 02/12/2020, OK
  *  BUILD:  27/10/2020, 18:38 - Build completed successfully in 1 s 201 ms
  *  ************************************************
  **/

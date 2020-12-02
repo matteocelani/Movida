@@ -57,3 +57,39 @@ Year: 1993
 Director: Andrew Davis  	
 Cast: Harrison Ford, Tommy Lee Jones, Sela Ward 
 Votes: 256213
+
+
+Ford
+Ward 
+Lee Jones
+Oldman
+Close
+Pfeiffer
+Towne
+Pacino
+Bauer
+Collette
+Osment
+Willis
+Rickman
+Bedelia
+Skerritt
+McConaughey
+Foster
+Thurman
+Travolta
+De Niro
+Shepherd
+Brooks
+Lewis
+Lange
+Nolte
+
+Scorsese
+Tarantino
+Zemeckis
+McTiernan
+Shyamalan
+Palma
+Petersen
+Davis

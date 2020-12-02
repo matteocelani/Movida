@@ -17,17 +17,11 @@ import java.util.*;
  * COMMENTI DA ELIMINARE ALLA CONSEGNA
  * ULTIMA MODIFICA: 09/11/2020
  * ************************************************
- * Finchè non si implementano tutte le classe in IMovidaDb il compilatore restituisce errore:
- * java: movida.dalessandrocelani.MovidaCore is not abstract and does not override abstract method getMovieByTitle(java.lang.String) in movida.commons.IMovidaDB
  *
- * Finchè le classi non hanno un tipo di ritorno il compilatore segna errore:
- * java: missing return statement
- *
- * Da Fare:
- * Implementare le funzioni presenti in IMovidaDB quindi di conseguenza implementare la classe DBUtils
+ * TODO: IMovidaSearch
  *
  * ************************************************
- *  DATA ULTIMO TEST: 09/11/2020, OK
+ *  DATA ULTIMO TEST: 02/12/2020, OK
  *  BUILD: OK
  * ************************************************
 **/
@@ -136,13 +130,11 @@ public class MovidaCore implements IMovidaDB {
         if(tmp != null){
             // Decremento il numero di film a cui ogni attore del cast ha partecipato
             for(Person p : tmp.getCast()){
+                System.out.println(p);
                 DetailPerson actor = this.people.get(p.getName());
                 actor.removeMovie();
-                if(actor.getNumMov()==0){
-                    this.people.remove(actor);
-                }
             }
-            this.movies.remove(tmp.getTitle());
+            this.movies.remove(title);
             return true;
         } else
             return false;
@@ -163,8 +155,26 @@ public class MovidaCore implements IMovidaDB {
     public static void main(String[] args) {
         MovidaCore prova = new MovidaCore();
         System.out.println("Hello, World!");
+        //Test lettura file
         prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
         prova.stampa(prova.movies);
+        //Test getMovieByTitle()
+        System.out.println(prova.getMovieByTitle("taxidriver").getTitle());
+        //Test getPersonByName()
+        System.out.println(prova.getPersonByName("Toni Collette").getName());
+        //Test getAllMovies()
+        System.out.println(prova.getAllMovies()[5].getTitle());
+        //Test getAllPeople()
+        System.out.println(prova.getAllPeople()[5].getName());
+        //Test countMovies()
+        System.out.println(prova.countMovies());
+        //Test countPeople()
+        System.out.println(prova.countPeople());
+        //Test deleteMovieByTitle()
+        prova.deleteMovieByTitle("capefear");
+        System.out.println(prova.countMovies());
+        System.out.println(prova.countPeople());
+        //Test salva nuovo file
         prova.saveToFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
         System.out.println("Hello, World!");
     }
