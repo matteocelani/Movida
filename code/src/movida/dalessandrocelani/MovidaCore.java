@@ -208,7 +208,23 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
     //Ricerca film per attore.
     @Override
     public Movie[] searchMoviesStarredBy(String name) {
-        return new Movie[0];
+        ArrayList<Movie> x = new ArrayList<>();
+        Movie[] m = this.movies.values().toArray(new Movie[0]);
+        //Trasformo l'Attore inserito
+        String low = name.toLowerCase().trim().replaceAll("\\s","");
+
+        for (Movie y: m){
+            Person[] ceckCast = y.getCast();
+            for (Person a : ceckCast) {
+                //Trasformo l'Attore selezionato
+                String ylow = a.getName().toLowerCase().trim().replaceAll("\\s","");
+                if(ylow.contains(low)){     //Se il film è stato trovato, lo aggiunge al vettore vuoto
+                    x.add(y);
+                }
+
+            }
+        }
+        return x.toArray(new Movie[0]);
     }
 
     //Ricerca film più votati.
@@ -267,6 +283,9 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
 
         //Test searchMoviesDirectedBy()
         System.out.println(prova.searchMoviesDirectedBy("Brian De Palma")[0].getTitle());
+
+        //Test searchMoviesStarredBy()
+        System.out.println(prova.searchMoviesStarredBy("Robert De Niro")[1].getTitle());
 
         //Test salva nuovo file
         //prova.saveToFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
