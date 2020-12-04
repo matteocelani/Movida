@@ -2,13 +2,11 @@
 //  MovidaDictionary.java
 //  Movida
 //
-//  Created by Francesco D'Alessandro on 02/11/2020.
+//  Created by Francesco D'Alessandro on 04/12/2020.
 //  Copyright © 2020 Matteo Celani Francesco D'Alessandro. All rights reserved.
 //
 
 package movida.dalessandrocelani;
-
-import java.util.ArrayList;
 
 /**
  * ************************************************
@@ -22,15 +20,17 @@ import java.util.ArrayList;
  *  ************************************************
  **/
 
-public interface MovidaDictionary<K,V> {
+public class Node<K,V> {
+    K key;
+    V value;
 
-    void put(K key, V value);
+    Node<K,V> next;
 
-    V get(K key);
+    public Node() {
+        this.key = key;
+        this.value = value;
+    }
 
-    V remove(K key);
-
-    ArrayList<V> printAll();
-
-    int size();
+    public K getKey(){ return this.key; }
+    public V getValue(){ return this.value; }
 }
