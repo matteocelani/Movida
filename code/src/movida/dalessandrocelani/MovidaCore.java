@@ -15,26 +15,27 @@ import java.util.*;
 /**
  * ************************************************
  * COMMENTI DA ELIMINARE ALLA CONSEGNA
- * ULTIMA MODIFICA: 02/12/2020
+ * ULTIMA MODIFICA: 03/01/2021
  * ************************************************
  *
  * TODO: IMovidaSearch (50%)
  *
  * ************************************************
- *  DATA ULTIMO TEST: 02/12/2020, OK
- *  BUILD: OK
+ *  DATA ULTIMO TEST: 03/01/2021
+ *  BUILD: Exception in thread "main" java.lang.NullPointerException: Cannot invoke "movida.commons.Movie.getTitle()" because the return value of "movida.dalessandrocelani.MovidaCore.getMovieByTitle(String)" is null
+ * 	at movida.dalessandrocelani.MovidaCore.main(MovidaCore.java:249)
  * ************************************************
 **/
 public class MovidaCore implements IMovidaDB, IMovidaSearch {
 
     private DBUtils dbutils;
-    private HashMap<String, Movie> movies;
-    private HashMap<String, DetailPerson> people;
+    private ListaCollegataNonOrdinata<String, Movie> movies;
+    private ListaCollegataNonOrdinata<String, DetailPerson> people;
 
     MovidaCore() {
         this.dbutils = new DBUtils();
-        this.movies = new HashMap<String, Movie>();
-        this.people = new HashMap<String, DetailPerson>();
+        this.movies = new ListaCollegataNonOrdinata<String, Movie>();
+        this.people = new ListaCollegataNonOrdinata<String, DetailPerson>();
     }
 
     //Carica i dati da un file, organizzato secondo il formato MOVIDA
@@ -79,21 +80,6 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
 
     }
 
-    public void stampa(HashMap<String, Movie> films) {
-        for (String film: films.keySet()){
-            String key = film;
-            Movie value = films.get(film);
-            Person[] cast = value.getCast();
-            Person direttore = value.getDirector();
-            System.out.println(key + " " + value.getTitle());
-            System.out.println(key + " " + value.getYear());
-            System.out.println(key + " " + cast[1].getName());
-            System.out.println(key + " " + direttore.getName());
-            System.out.println(key + " " + value.getVotes());
-        }
-
-    }
-
     //Salva tutti i dati su un file.
     public void saveToFile(File f) {
         /**
@@ -109,8 +95,8 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
     //Cancella tutti i dati.
     public void clear() {
         this.dbutils = new DBUtils();
-        this.movies = new HashMap<>();
-        this.people = new HashMap<>();
+        this.movies = new ListaCollegataNonOrdinata<>();
+        this.people = new ListaCollegataNonOrdinata<>();
         //TODO: cambiare con nuove strutture dati implementate e aggiungere il reset del grafico
     }
 
@@ -257,9 +243,8 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         MovidaCore prova = new MovidaCore();
         System.out.println("Inizio");
         //Test lettura file
-        //prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
-        prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
-        //prova.stampa(prova.movies);
+        prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
+        //prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
 
         //Test getMovieByTitle()
         System.out.println(prova.getMovieByTitle("taxidriver").getTitle());

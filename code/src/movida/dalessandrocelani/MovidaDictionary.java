@@ -9,16 +9,18 @@
 package movida.dalessandrocelani;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * ************************************************
  * COMMENTI DA ELIMINARE ALLA CONSEGNA
- * ULTIMA MODIFICA: 04/12/2020
+ * ULTIMA MODIFICA: 03/01/2021
  * ************************************************
  *
  *  ************************************************
- *  DATA ULTIMO TEST: MAI TESTATO
- *  BUILD:
+ *  DATA ULTIMO TEST: 03/01/2021
+ *  BUILD: Exception in thread "main" java.lang.NullPointerException: Cannot invoke "movida.commons.Movie.getTitle()" because the return value of "movida.dalessandrocelani.MovidaCore.getMovieByTitle(String)" is null
+ *  at movida.dalessandrocelani.MovidaCore.main(MovidaCore.java:249)
  *  ************************************************
  **/
 
@@ -28,9 +30,9 @@ public interface MovidaDictionary<K,V> {
 
     V get(K key);
 
-    V remove(K key);
+    void remove(K key);
 
-    ArrayList<V> printAll();
+    LinkedList<V> values();
 
     int size();
 }
