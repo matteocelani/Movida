@@ -32,7 +32,7 @@ public interface MovidaDictionary<K,V> {
 
     void remove(K key);
 
-    LinkedList<V> values();
+    ArrayList<V> values();
 
     int size();
 }

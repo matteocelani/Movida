@@ -38,7 +38,7 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
         if (start == null) {       //Se la lista è vuota, start==null, allora ritorna false
             return false;
         } else {                    //Altrimenti scannerizzo la lista
-            for(Node iter=start; iter.next != null; iter = iter.next){
+            for(Node<K,V> iter=start; iter.next != null; iter = iter.next){
                 if (key == iter.getKey()) {         //Se la chive in input corrisponde alla chiave del nodo corrente
                     return true;     //Ritorna true
                 }
@@ -72,13 +72,13 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
         if (start == null) {       //Se la lista è vuota, start==null, allora ritorna null
             return null;
         } else {                    //Altrimenti scannerizzo la lista
-            for(Node iter=start; iter.next != null; iter = iter.next){
+            for(Node<K,V> iter=start; iter.next != null; iter = iter.next){
                 if (key == iter.getKey()) {         //Se la chive in input corrisponde alla chiave del nodo corrente
                     /**
                      *                 V find = (V) iter.getValue();
                      *                 return find;
                      */
-                    return (V) iter.getValue();     //Ritorna il valore del nodo corrente
+                    return iter.getValue();     //Ritorna il valore del nodo corrente
                 }
             }
         }
@@ -88,7 +88,7 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
 
     @Override
     public void remove(K key) {
-        Node iter = start,
+        Node<K,V> iter = start,
                 prev = null;
         /**
          * CASO 1: se l'elemento da eliminare è la testa, aggiorno il puntatore.
@@ -120,9 +120,9 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
     }
 
     @Override
-    public LinkedList<V> values() {
-        LinkedList<V> values = new LinkedList<>();
-        for(Node iter=start; iter.next != null; iter = iter.next){
+    public ArrayList<V> values() {
+        ArrayList<V> values = new ArrayList<>();
+        for(Node<K,V> iter=start; iter.next != null; iter = iter.next){
             values.add((V) iter.getValue());
         }
         return values;

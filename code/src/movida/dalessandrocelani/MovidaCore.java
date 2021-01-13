@@ -97,7 +97,6 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         this.dbutils = new DBUtils();
         this.movies = new ListaCollegataNonOrdinata<>();
         this.people = new ListaCollegataNonOrdinata<>();
-        //TODO: cambiare con nuove strutture dati implementate e aggiungere il reset del grafico
     }
 
     //Restituisce il numero di film
@@ -127,9 +126,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
     }
 
     //Restituisce il record associato ad un film
-    public Movie getMovieByTitle(String title){
-        return this.movies.get(title);
-    }
+    public Movie getMovieByTitle(String title){ return this.movies.get(title); }
 
     //Restituisce il record associato ad una persona, attore o regista
     public Person getPersonByName(String name) {
@@ -247,22 +244,22 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         //prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
 
         //Test getMovieByTitle()
-        System.out.println(prova.getMovieByTitle("taxidriver").getTitle());
+        //System.out.println(prova.getMovieByTitle("taxidriver").getTitle());
 
         //Test getPersonByName()
-        System.out.println(prova.getPersonByName("Toni Collette").getName());
+        //System.out.println(prova.getPersonByName("Toni Collette").getName());
 
         //Test getAllMovies()
-        System.out.println(prova.getAllMovies()[5].getTitle());
+        System.out.println("Test getAllMovies(): " + prova.getAllMovies()[3].getTitle());
 
         //Test getAllPeople()
-        System.out.println(prova.getAllPeople()[5].getName());
+        System.out.println("Test getAllPeople(): " + prova.getAllPeople()[5].getName());
 
         //Test countMovies()
-        System.out.println(prova.countMovies());
+        System.out.println("Test countMovies(): " + prova.countMovies());
 
         //Test countPeople()
-        System.out.println(prova.countPeople());
+        System.out.println("Test countPeople(): " + prova.countPeople());
 
         //Test deleteMovieByTitle()
         //prova.deleteMovieByTitle("capefear");
@@ -270,16 +267,16 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         //System.out.println(prova.countPeople());
 
         //Test searchMoviesByTitle()
-        System.out.println(prova.searchMoviesByTitle("Die Hard")[0].getTitle());
+        System.out.println("Test searchMoviesByTitle(): " + prova.searchMoviesByTitle("Die Hard")[0].getTitle());
 
         //Test searchMoviesInYear()
-        System.out.println(prova.searchMoviesInYear(1993)[0].getTitle());
+        //System.out.println(prova.searchMoviesInYear(1993)[0].getTitle());
 
         //Test searchMoviesDirectedBy()
-        System.out.println(prova.searchMoviesDirectedBy("Brian De Palma")[0].getTitle());
+        System.out.println("Test searchMoviesDirectedBy(): " + prova.searchMoviesDirectedBy("Brian De Palma")[0].getTitle());
 
         //Test searchMoviesStarredBy()
-        System.out.println(prova.searchMoviesStarredBy("Robert De Niro")[1].getTitle());
+        System.out.println("Test searchMoviesStarredBy(): " + prova.searchMoviesStarredBy("Robert De Niro")[1].getTitle());
 
         //Test salva nuovo file
         //prova.saveToFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));

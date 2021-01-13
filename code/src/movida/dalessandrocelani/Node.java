@@ -26,7 +26,6 @@ public class Node<K,V> {
     V value;
 
     Node<K,V> next;
-    Node<K,V> prev;
 
     public Node() {
         this.key = key;
