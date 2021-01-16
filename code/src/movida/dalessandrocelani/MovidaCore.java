@@ -10,20 +10,20 @@ package movida.dalessandrocelani;
 import movida.commons.*;
 
 import java.io.*;
+import java.security.Key;
 import java.util.*;
 
 /**
  * ************************************************
  * COMMENTI DA ELIMINARE ALLA CONSEGNA
- * ULTIMA MODIFICA: 03/01/2021
+ * ULTIMA MODIFICA: 13/01/2021
  * ************************************************
  *
  * TODO: IMovidaSearch (50%)
  *
  * ************************************************
- *  DATA ULTIMO TEST: 03/01/2021
- *  BUILD: Exception in thread "main" java.lang.NullPointerException: Cannot invoke "movida.commons.Movie.getTitle()" because the return value of "movida.dalessandrocelani.MovidaCore.getMovieByTitle(String)" is null
- * 	at movida.dalessandrocelani.MovidaCore.main(MovidaCore.java:249)
+ *  DATA ULTIMO TEST: 13/01/2021
+ *  BUILD:
  * ************************************************
 **/
 public class MovidaCore implements IMovidaDB, IMovidaSearch {
@@ -48,7 +48,10 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
 
         //Carico i dati usando loadFilm()
         Movie[] mov = this.dbutils.loadFilm(f);
+        int i =1;
         for(Movie movie: mov) {
+            System.out.print(i + " - ");
+            i++;
 
             String title = movie.getTitle().toLowerCase().trim().replaceAll("\\s", "");
             //Se il titolo è già presente: elimino il film con lo stesso titolo e carico il nuovo (aggiornamento)
@@ -77,6 +80,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
                 }
             }
         }
+        System.out.print(movies.values().toArray().length);
 
     }
 
@@ -88,8 +92,22 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
          *  • Inserisco i dati
          *  • Se non si riesce a salvare --> eccezione
          */
-        Movie[] mov = this.movies.values().toArray(new Movie[0]);
+        Movie[] mov = this.movies.values().toArray(new Movie[0]);;
         this.dbutils.save(f, mov);
+    }
+
+    public void stampa(ListaCollegataNonOrdinata<String, Movie> films) {
+        for (String film: films.keySet()){
+            String key = film;
+            Movie value = films.get(film);
+            Person[] cast = value.getCast();
+            Person direttore = value.getDirector();
+            System.out.println(key + " " + value.getTitle());
+            System.out.println(key + " " + value.getYear());
+            System.out.println(key + " " + cast[1].getName());
+            System.out.println(key + " " + direttore.getName());
+            System.out.println(key + " " + value.getVotes());
+        }
     }
 
     //Cancella tutti i dati.
@@ -100,9 +118,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
     }
 
     //Restituisce il numero di film
-    public int countMovies() {
-        return this.movies.values().toArray().length;
-    }
+    public int countMovies() { return this.movies.values().toArray().length; }
 
     //Restituisce il numero di persone
     public int countPeople() {
@@ -111,13 +127,16 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
 
     //Cancella il film con un dato titolo, se esiste.
     public boolean deleteMovieByTitle(String title) {
-        Movie tmp = this.movies.get(title);
+        Movie tmp = getMovieByTitle(title);
         if(tmp != null){
             // Decremento il numero di film a cui ogni attore del cast ha partecipato
             for(Person p : tmp.getCast()){
-                System.out.println(p);
+                System.out.println(p.getName());
                 DetailPerson actor = this.people.get(p.getName());
                 actor.removeMovie();
+                if (actor.getNumMov() == 0){
+                    this.people.remove(actor.getName());
+                }
             }
             this.movies.remove(title);
             return true;
@@ -243,14 +262,18 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
         //prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
 
+        prova.stampa(prova.movies);
+
+        //prova.movies.stampaLista();
+
         //Test getMovieByTitle()
-        //System.out.println(prova.getMovieByTitle("taxidriver").getTitle());
+        System.out.println(prova.getMovieByTitle("taxidriver").getTitle());
 
         //Test getPersonByName()
-        //System.out.println(prova.getPersonByName("Toni Collette").getName());
+        System.out.println(prova.getPersonByName("Toni Collette").getName());
 
         //Test getAllMovies()
-        System.out.println("Test getAllMovies(): " + prova.getAllMovies()[3].getTitle());
+        System.out.println("Test getAllMovies(): " + prova.getAllMovies()[4].getTitle());
 
         //Test getAllPeople()
         System.out.println("Test getAllPeople(): " + prova.getAllPeople()[5].getName());
@@ -262,7 +285,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         System.out.println("Test countPeople(): " + prova.countPeople());
 
         //Test deleteMovieByTitle()
-        //prova.deleteMovieByTitle("capefear");
+        //prova.deleteMovieByTitle("airforceone");
         //System.out.println(prova.countMovies());
         //System.out.println(prova.countPeople());
 

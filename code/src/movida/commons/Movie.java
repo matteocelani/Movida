@@ -36,9 +36,7 @@ public class Movie {
 		this.director = director;
 	}
 
-	public String getTitle() {
-		return this.title;
-	}
+	public String getTitle() { return this.title; }
 
 	public Integer getYear() {
 		return this.year;
