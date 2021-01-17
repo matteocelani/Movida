@@ -11,11 +11,11 @@ package movida.dalessandrocelani;
 /**
  * ************************************************
  * COMMENTI DA ELIMINARE ALLA CONSEGNA
- * ULTIMA MODIFICA: 13/01/2021
+ * ULTIMA MODIFICA: 18/01/2021
  * ************************************************
  *
  *  ************************************************
- *  DATA ULTIMO TEST: 13/01/2021
+ *  DATA ULTIMO TEST: 18/01/2021
  *  BUILD:
  *  ************************************************
  **/
@@ -31,7 +31,6 @@ public class Node<K,V> {
         this.key = key;
         this.value = value;
         this.next = null;
-        this.prev = null;
     }
 
     public K getKey(){ return this.key; }

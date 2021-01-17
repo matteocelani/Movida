@@ -14,19 +14,21 @@ import java.util.*;
 /**
  * ************************************************
  * COMMENTI DA ELIMINARE ALLA CONSEGNA
- * ULTIMA MODIFICA: 13/01/2021
+ * ULTIMA MODIFICA: 18/01/2021
  * ************************************************
+ *  TODO:Perdiamo l'ultimo elemento dell'array quando facciamo put
+ *      Non funziona delete
  *
  *  ************************************************
- *  DATA ULTIMO TEST: 13/01/2021
+ *  DATA ULTIMO TEST: 18/01/2021
  *  BUILD:
  *  ************************************************
  **/
 
 public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
 
-    public Node<K,V> start;
-    public int size;
+    private Node<K,V> start;
+    private int size;
 
     public ListaCollegataNonOrdinata() {
         this.size = 0;
@@ -55,21 +57,18 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
 
         if (this.start == null) {        //Se la lista è vuota, start==null, allora il nostro nodo start punterà direttamente al nodo inserito
             this.start= newNode;
-            this.start.next = null;
             this.size++;
-        } else {
-            //Scorro la lista fino a iter.next==null ,ci agganciamo al nodo che vogliamo inserire
-            Node<K, V> iter = start;
-            while (iter.next != null) {
-                iter = iter.next;
-                //System.out.print(iter.getKey() +" - ");
-            }
-            newNode.next = null;
-            iter.next = newNode;
-            //System.out.print(last.getKey() + " " + last.next.getKey() + "\n");
-            this.size++;
+            return;
         }
-        this.stampaLista();
+        //Scorro la lista fino a iter.next==null ,ci agganciamo al nodo che vogliamo inserire
+        Node<K,V> iter = start;
+        while (iter.next != null) {
+            iter = iter.next;
+            //System.out.print(iter.getKey() +" - ");
+        }
+        newNode.next = null;
+        iter.next = newNode;
+        this.size++;
     }
 
     @Override

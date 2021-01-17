@@ -16,13 +16,16 @@ import java.util.*;
 /**
  * ************************************************
  * COMMENTI DA ELIMINARE ALLA CONSEGNA
- * ULTIMA MODIFICA: 13/01/2021
+ * ULTIMA MODIFICA: 18/01/2021
  * ************************************************
  *
  * TODO: IMovidaSearch (50%)
+ *    Perdiamo l'ultimo elemento dell'array quando facciamo put
+ *    Non funziona delete
+ *
  *
  * ************************************************
- *  DATA ULTIMO TEST: 13/01/2021
+ *  DATA ULTIMO TEST: 18/01/2021
  *  BUILD:
  * ************************************************
 **/
@@ -74,11 +77,11 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
             /*if ( !this.movies.containsKey(title) ){
                 this.movies.remove(title);
             }*/
-            System.out.print("-------PUT-------");
+            //System.out.print("-------PUT-------");
             this.movies.put(keyTitle, movie);
-            System.out.print("-------END PUT-------");
-            //System.out.print( movies.size() + "\n");
-            //System.out.print( movies.keySet() + "\n");
+            //System.out.print("\n-------END PUT------- \n");
+            System.out.print( movies.size() + "\n");
+            System.out.print( movies.keySet() + "\n");
 
             //Inserisco il cast e il direttore
 
@@ -265,18 +268,27 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
     //Ricerca film più votati.
     @Override
     public Movie[] searchMostVotedMovies(Integer N) {
+        Movie[] mov = new Movie[N];
+        Movie[] list = this.movies.values().toArray(new Movie[0]);
+
         return new Movie[0];
     }
 
     //Ricerca film più recenti.
     @Override
     public Movie[] searchMostRecentMovies(Integer N) {
+        Movie[] mov = new Movie[N];
+        Movie[] list = this.movies.values().toArray(new Movie[0]);
+
         return new Movie[0];
     }
 
     //Ricerca gli attori più attivi.
     @Override
     public Person[] searchMostActiveActors(Integer N) {
+        Movie[] mov = new Movie[N];
+        Movie[] list = this.movies.values().toArray(new Movie[0]);
+
         return new Person[0];
     }
 
@@ -287,9 +299,9 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
         //prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
 
-        //prova.stampa(prova.movies);
+        prova.stampa(prova.movies);
 
-        //prova.movies.stampaLista();
+        prova.movies.stampaLista();
 
         //Test getMovieByTitle()
         System.out.println("\n" + prova.getMovieByTitle("taxidriver").getTitle());
@@ -325,6 +337,10 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
 
         //Test searchMoviesStarredBy()
         System.out.println("Test searchMoviesStarredBy(): " + prova.searchMoviesStarredBy("Robert De Niro")[1].getTitle());
+
+        //Test clear()
+        //prova.clear();
+        //prova.movies.stampaLista();
 
         //Test salva nuovo file
         //prova.saveToFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
