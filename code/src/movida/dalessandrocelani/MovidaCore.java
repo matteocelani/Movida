@@ -48,39 +48,61 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
 
         //Carico i dati usando loadFilm()
         Movie[] mov = this.dbutils.loadFilm(f);
-        int i =1;
-        for(Movie movie: mov) {
-            System.out.print(i + " - ");
-            i++;
 
-            String title = movie.getTitle().toLowerCase().trim().replaceAll("\\s", "");
+        /**for (int p = 0 ; p < mov.length ; p++) {
+            System.out.print(mov[p].getTitle() + " \n");
+            System.out.print(mov[p].getYear() + " \n");
+            System.out.print(mov[p].getDirector().getName() + " \n");
+            System.out.print(mov[p].getDetailCast() + " \n");
+            System.out.print(mov[p].getVotes() + " \n");
+            System.out.print(" \n");
+        }**/
+
+        for(Movie movie: mov) {
+
+            /**
+            System.out.print(movie.getTitle() + " \n");
+            System.out.print(movie.getYear() + " \n");
+            System.out.print(movie.getDirector().getName() + " \n");
+            System.out.print(movie.getDetailCast() + " \n");
+            System.out.print(movie.getVotes() + " \n");
+            System.out.print("Chiave:" + movie.getTitle().toLowerCase().trim().replaceAll("\\s", "") + "\n");
+            System.out.print("\n");**/
+
+            String keyTitle = movie.getTitle().toLowerCase().trim().replaceAll("\\s", "");
             //Se il titolo è già presente: elimino il film con lo stesso titolo e carico il nuovo (aggiornamento)
             /*if ( !this.movies.containsKey(title) ){
                 this.movies.remove(title);
             }*/
-            this.movies.put(title, movie);
+            System.out.print("-------PUT-------");
+            this.movies.put(keyTitle, movie);
+            System.out.print("-------END PUT-------");
+            //System.out.print( movies.size() + "\n");
+            //System.out.print( movies.keySet() + "\n");
 
             //Inserisco il cast e il direttore
 
             //Direttore: se il direttore non è presente lo inserisco
+            String keyDirector = movie.getDirector().getName().toLowerCase().trim().replaceAll("\\s", "");
             String director = movie.getDirector().getName().trim();
-            if ( ! this.people.containsKey(director) ) {
-                this.people.put(director, new DetailPerson(director, 0, false));
+            if ( ! this.people.containsKey(keyDirector) ) {
+                this.people.put(keyDirector, new DetailPerson(director, 0, false));
             }
 
             //Cast: controllo se la persona è già presente se è presente incremento il suo numero di film, altrimenti se non è presente la inserisco
             for (Person actor : movie.getCast()) {
+                String keyCurrentActor = actor.getName().toLowerCase().trim().replaceAll("\\s", "");
                 String currentActor = actor.getName();
                 //Movie detailActor = this.people.get(currentActor);
-                if ( ! this.people.containsKey(currentActor) ) {
-                    this.people.put(currentActor, new DetailPerson(currentActor, 0, true));
+                if ( ! this.people.containsKey(keyCurrentActor) ) {
+                    this.people.put(keyCurrentActor, new DetailPerson(currentActor, 0, true));
                 }
                 else {
-                    this.people.get(currentActor).addMovie();
+                    this.people.get(keyCurrentActor).addMovie();
                 }
             }
         }
-        System.out.print(movies.values().toArray().length);
+        //System.out.print("\n" + movies.values().toArray().length + "\n");
 
     }
 
@@ -97,7 +119,10 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
     }
 
     public void stampa(ListaCollegataNonOrdinata<String, Movie> films) {
+        int i =0;
         for (String film: films.keySet()){
+            System.out.print(i + " - ");
+            i++;
             String key = film;
             Movie value = films.get(film);
             Person[] cast = value.getCast();
@@ -166,7 +191,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
     //Ricerca film per titolo.
     @Override
     public Movie[] searchMoviesByTitle(String title) {
-        ArrayList<Movie> x = new ArrayList<>();
+        LinkedList<Movie> x = new LinkedList<>();
         Movie[] m = this.movies.values().toArray(new Movie[0]);
         //Trasformo il titolo inserito
         String low = title.toLowerCase().trim().replaceAll("\\s","");
@@ -185,7 +210,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
     //Ricerca film per anno.
     @Override
     public Movie[] searchMoviesInYear(Integer year) {
-        ArrayList<Movie> x = new ArrayList<>();
+        LinkedList<Movie> x = new LinkedList<>();
         Movie[] m = this.movies.values().toArray(new Movie[0]);
 
         for (Movie y: m){
@@ -262,15 +287,15 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
         //prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
 
-        prova.stampa(prova.movies);
+        //prova.stampa(prova.movies);
 
         //prova.movies.stampaLista();
 
         //Test getMovieByTitle()
-        System.out.println(prova.getMovieByTitle("taxidriver").getTitle());
+        System.out.println("\n" + prova.getMovieByTitle("taxidriver").getTitle());
 
         //Test getPersonByName()
-        System.out.println(prova.getPersonByName("Toni Collette").getName());
+        System.out.println(prova.getPersonByName("tonicollette").getName());
 
         //Test getAllMovies()
         System.out.println("Test getAllMovies(): " + prova.getAllMovies()[4].getTitle());
@@ -285,7 +310,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         System.out.println("Test countPeople(): " + prova.countPeople());
 
         //Test deleteMovieByTitle()
-        //prova.deleteMovieByTitle("airforceone");
+        //prova.deleteMovieByTitle("diehard");
         //System.out.println(prova.countMovies());
         //System.out.println(prova.countPeople());
 
@@ -293,7 +318,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         System.out.println("Test searchMoviesByTitle(): " + prova.searchMoviesByTitle("Die Hard")[0].getTitle());
 
         //Test searchMoviesInYear()
-        //System.out.println(prova.searchMoviesInYear(1993)[0].getTitle());
+        System.out.println("Test searchMoviesInYear(): " + prova.searchMoviesInYear(2000)[0].getTitle());
 
         //Test searchMoviesDirectedBy()
         System.out.println("Test searchMoviesDirectedBy(): " + prova.searchMoviesDirectedBy("Brian De Palma")[0].getTitle());

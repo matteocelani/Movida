@@ -35,7 +35,7 @@ public class DBUtils {
     //Caricamento dei film tramite file
     public Movie[] loadFilm (File f) {
         String[] movieString = new String[5];      //Contiene i 5 campi della classe Movie
-        ArrayList<Movie> movies = new ArrayList<>();
+        LinkedList<Movie> movies = new LinkedList<>();
         try {
             Scanner sc = new Scanner(f);
             //Scanerrizzo il file per righe fino alla fine

@@ -1,0 +1,4 @@
+LISTA COLLEGATA NON ORDINATA:
+1) Non funziona delete
+2) Perdiamo l'ultimo elemento dell'array quando facciamo put
+s

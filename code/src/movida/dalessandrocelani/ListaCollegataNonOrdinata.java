@@ -25,20 +25,20 @@ import java.util.*;
 
 public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
 
-    private Node<K,V> start;
-    private int size;
+    public Node<K,V> start;
+    public int size;
 
     public ListaCollegataNonOrdinata() {
-        size = 0;
-        start = null;
+        this.size = 0;
+        this.start = null;
     }
 
     public boolean containsKey(K key) {
-        if (start == null) {       //Se la lista è vuota, start==null, allora ritorna false
+        if (this.start == null) {       //Se la lista è vuota, start==null, allora ritorna false
             return false;
         } else {                    //Altrimenti scannerizzo la lista
-            for(Node<K,V> iter=start; iter.next != null; iter = iter.next){
-                if (key == iter.getKey()) {         //Se la chive in input corrisponde alla chiave del nodo corrente
+            for(Node<K,V> iter=this.start; iter.next != null; iter = iter.next){
+                if (key.equals(iter.getKey())) {         //Se la chive in input corrisponde alla chiave del nodo corrente
                     return true;     //Ritorna true
                 }
             }
@@ -49,31 +49,35 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
 
     @Override
     public void put(K key, V value) {
-        Node<K,V> newNode = new Node<>();
-        newNode.key = key;
-        newNode.value = value;
+        Node<K,V> newNode = new Node<>(key, value);
 
-        if (start == null) {        //Se la lista è vuota, start==null, allora il nostro nodo start punterà direttamente al nodo inserito
-            start = newNode;
-            size++;
-            return;
+        //System.out.print(newNode.getKey() +" - " + newNode.getValue() + "\n" );
+
+        if (this.start == null) {        //Se la lista è vuota, start==null, allora il nostro nodo start punterà direttamente al nodo inserito
+            this.start= newNode;
+            this.start.next = null;
+            this.size++;
+        } else {
+            //Scorro la lista fino a iter.next==null ,ci agganciamo al nodo che vogliamo inserire
+            Node<K, V> iter = start;
+            while (iter.next != null) {
+                iter = iter.next;
+                //System.out.print(iter.getKey() +" - ");
+            }
+            newNode.next = null;
+            iter.next = newNode;
+            //System.out.print(last.getKey() + " " + last.next.getKey() + "\n");
+            this.size++;
         }
-        newNode.next = null;
-        Node<K,V> last = start;
-        while (last.next != null) { //Scorro la lista fino a last.next!=null ,ci agganciamo al nodo che vogliamo inserire
-            last = last.next;
-        }
-        last.next = newNode;
-        size++;
-        return;
+        this.stampaLista();
     }
 
     @Override
     public V get(K key) {
-        if (start == null) {       //Se la lista è vuota, start==null, allora ritorna null
+        if (this.start == null) {       //Se la lista è vuota, start==null, allora ritorna null
             return null;
         } else {                    //Altrimenti scannerizzo la lista
-            for(Node<K,V> iter=start; iter.next != null; iter = iter.next){
+            for(Node<K,V> iter=this.start; iter.next != null; iter = iter.next){
                 if (key.equals(iter.getKey())) {         //Se la chive in input corrisponde alla chiave del nodo corrente
                     /**
                      *                 V find = (V) iter.getValue();
@@ -89,14 +93,14 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
 
     @Override
     public void remove(K key) {
-        Node<K,V> iter = start;
+        Node<K,V> iter = this.start;
         /**
          * CASO 1: se l'elemento da eliminare è la testa, aggiorno il puntatore.
          **/
         if (iter != null && key.equals(iter.getKey())) {
-            start = iter.next;
-            size --;
-            System.out.print("PORCO DIOOOOO");
+            this.start = iter.next;
+            this.size --;
+            //System.out.print(this.start.getKey() + " ");
         }
         /**
          * CASO 2: l'elemento su trova all'interno della lista:
@@ -110,7 +114,6 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
              **/
             iter.prev = iter;
             iter = iter.next;
-            System.out.print("PORCA MADONNA");
         }
         /**
          * se la chiave è presente si trova in iter, quindi non è null
@@ -118,36 +121,47 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
          **/
         if (iter != null) {
             iter.prev = iter.next;
-            size --;
+            this.size --;
         }
     }
 
     @Override
     public LinkedList<V> values() {
         LinkedList<V> values = new LinkedList<>();
+        Node<K,V> iter = this.start;
+        while ( iter.next != null ) {
+            values.add((V) iter.getValue());
+            iter = iter.next;
+        } /*
         for(Node<K,V> iter=start; iter.next != null; iter = iter.next){
             values.add((V) iter.getValue());
-        }
+        }*/
         return values;
     }
 
     public Set<K> keySet() {
         Set keys = new LinkedHashSet();
-        for(Node<K,V> iter=start; iter.next != null; iter = iter.next){
+        for(Node<K,V> iter= this.start; iter.next != null; iter = iter.next){
             keys.add((K) iter.getKey());
         }
         return keys;
     }
 
     public void stampaLista() {
-        for(Node<K,V> iter=start; iter.next != null; iter = iter.next) {
-            System.out.println(iter.getKey());
-            System.out.println(iter.getValue());
+        System.out.println("\n -------- STAMPA LISTA ---------");
+
+        Node<K,V> iter = this.start;
+
+        while (iter.next != null) {
+            System.out.println(iter.getKey() + " - " + iter.getValue() );
+            iter = iter.next;
         }
+
+        System.out.println("\n ------ FINE STAMPA LISTA ------- \n");
     }
 
     @Override
     public int size() {
-        return 0;
+        return this.size;
     }
 }
