@@ -19,7 +19,7 @@ package movida.commons;
  * per recupare le informazioni caratterizzanti di un film.
  * 
  */
-public class Movie {
+public class Movie implements Comparable{
 	
 	private String title;
 	private Integer year;
@@ -63,6 +63,14 @@ public class Movie {
 		return sb.toString().substring(0, sb.toString().length() - 2);
 	}
 
+	@Override
+	public int compareTo(Object o) {
+		return this.getTitle().compareTo(((Movie)o).getTitle());
+	}
 
+	@Override
+	public boolean equals(Object o) {
+		return this.getTitle().equals(((Movie)o).getTitle());
+	}
 
 }

@@ -338,9 +338,12 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         //Test searchMoviesStarredBy()
         System.out.println("Test searchMoviesStarredBy(): " + prova.searchMoviesStarredBy("Robert De Niro")[1].getTitle());
 
+        Sort p = new QuickSort();
+        p.sort(prova.movies.values().toArray(new Movie[0]));
+
         //Test clear()
         //prova.clear();
-        //prova.movies.stampaLista();
+        prova.movies.stampaLista();
 
         //Test salva nuovo file
         //prova.saveToFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
