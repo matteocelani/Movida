@@ -4,20 +4,21 @@
 //
 //  Created by Francesco D'Alessandro on 02/11/2020.
 //  Copyright © 2020 Matteo Celani Francesco D'Alessandro. All rights reserved.
-//
+//  ...
 
 package movida.dalessandrocelani;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * ************************************************
  * COMMENTI DA ELIMINARE ALLA CONSEGNA
- * ULTIMA MODIFICA: 04/12/2020
+ * ULTIMA MODIFICA: 13/01/2021
  * ************************************************
  *
  *  ************************************************
- *  DATA ULTIMO TEST: MAI TESTATO
+ *  DATA ULTIMO TEST: 13/01/2021
  *  BUILD:
  *  ************************************************
  **/
@@ -28,9 +29,9 @@ public interface MovidaDictionary<K,V> {
 
     V get(K key);
 
-    V remove(K key);
+    void remove(K key);
 
-    ArrayList<V> printAll();
+    LinkedList<V> values();
 
     int size();
 }

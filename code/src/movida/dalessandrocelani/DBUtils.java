@@ -17,7 +17,7 @@ import java.util.*;
 /**
  * ************************************************
  * COMMENTI DA ELIMINARE ALLA CONSEGNA
- * ULTIMA MODIFICA: 09/11/2020
+ * ULTIMA MODIFICA: 18/01/2021
  * ************************************************
  *  In questa classe ci occupiamo del caricamento dei dati da un file dizionario
  *  loadFilm() si occupa di ciò
@@ -26,8 +26,8 @@ import java.util.*;
  *  salva i campi nell'array di tipo Movie
  *  restitutisce il DB appena creato
  *  ************************************************
- *  DATA ULTIMO TEST: 02/12/2020, OK
- *  BUILD:  27/10/2020, 18:38 - Build completed successfully in 1 s 201 ms
+ *  DATA ULTIMO TEST: 18/01/2021
+ *  BUILD:
  *  ************************************************
  **/
 public class DBUtils {
@@ -35,7 +35,7 @@ public class DBUtils {
     //Caricamento dei film tramite file
     public Movie[] loadFilm (File f) {
         String[] movieString = new String[5];      //Contiene i 5 campi della classe Movie
-        ArrayList<Movie> movies = new ArrayList<>();
+        LinkedList<Movie> movies = new LinkedList<>();
         try {
             Scanner sc = new Scanner(f);
             //Scanerrizzo il file per righe fino alla fine
