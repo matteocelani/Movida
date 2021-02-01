@@ -20,8 +20,6 @@ import java.util.*;
  * ************************************************
  *
  * TODO: IMovidaSearch (50%)
- *    Perdiamo l'ultimo elemento dell'array quando facciamo put
- *    Non funziona delete
  *
  *
  * ************************************************
@@ -89,7 +87,9 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
             String keyDirector = movie.getDirector().getName().toLowerCase().trim().replaceAll("\\s", "");
             String director = movie.getDirector().getName().trim();
             if ( ! this.people.containsKey(keyDirector) ) {
-                this.people.put(keyDirector, new DetailPerson(director, 0, false));
+                this.people.put(keyDirector, new DetailPerson(director, 1, false));
+            } else {
+                this.people.get(keyDirector).addMovie();
             }
 
             //Cast: controllo se la persona è già presente se è presente incremento il suo numero di film, altrimenti se non è presente la inserisco
@@ -98,7 +98,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
                 String currentActor = actor.getName();
                 //Movie detailActor = this.people.get(currentActor);
                 if ( ! this.people.containsKey(keyCurrentActor) ) {
-                    this.people.put(keyCurrentActor, new DetailPerson(currentActor, 0, true));
+                    this.people.put(keyCurrentActor, new DetailPerson(currentActor, 1, true));
                 }
                 else {
                     this.people.get(keyCurrentActor).addMovie();
@@ -122,7 +122,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
     }
 
     public void stampa(ListaCollegataNonOrdinata<String, Movie> films) {
-        int i =0;
+        int i =1;
         for (String film: films.keySet()){
             System.out.print(i + " - ");
             i++;
@@ -146,12 +146,10 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
     }
 
     //Restituisce il numero di film
-    public int countMovies() { return this.movies.values().toArray().length; }
+    public int countMovies() { return this.movies.size(); }
 
     //Restituisce il numero di persone
-    public int countPeople() {
-        return this.people.values().size();
-    }
+    public int countPeople() { return this.people.size(); }
 
     //Cancella il film con un dato titolo, se esiste.
     public boolean deleteMovieByTitle(String title) {
@@ -160,11 +158,16 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
             // Decremento il numero di film a cui ogni attore del cast ha partecipato
             for(Person p : tmp.getCast()){
                 System.out.println(p.getName());
-                DetailPerson actor = this.people.get(p.getName());
+                DetailPerson actor = this.people.get(p.getName().toLowerCase().trim().replaceAll("\\s", ""));
                 actor.removeMovie();
                 if (actor.getNumMov() == 0){
-                    this.people.remove(actor.getName());
+                    this.people.remove(actor.getName().toLowerCase().trim().replaceAll("\\s", ""));
                 }
+            }
+            DetailPerson d = this.people.get(tmp.getDirector().getName().toLowerCase().trim().replaceAll("\\s", ""));
+            d.removeMovie();
+            if ( d.getNumMov() == 0 ) {
+                this.people.remove(tmp.getDirector().getName().toLowerCase().trim().replaceAll("\\s", ""));
             }
             this.movies.remove(title);
             return true;
@@ -322,28 +325,36 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         System.out.println("Test countPeople(): " + prova.countPeople());
 
         //Test deleteMovieByTitle()
-        //prova.deleteMovieByTitle("diehard");
-        //System.out.println(prova.countMovies());
-        //System.out.println(prova.countPeople());
+        prova.deleteMovieByTitle("thefugitive");
+        prova.deleteMovieByTitle("capefear");
+        prova.deleteMovieByTitle("diehard");
+        prova.deleteMovieByTitle("scarface");
+        prova.deleteMovieByTitle("airforceone");
+        prova.deleteMovieByTitle("taxidriver");
+        prova.deleteMovieByTitle("whatliesbeneath");
+        prova.deleteMovieByTitle("thesixthsense");
+        System.out.println(prova.countMovies());
+        System.out.println(prova.countPeople());
 
         //Test searchMoviesByTitle()
-        System.out.println("Test searchMoviesByTitle(): " + prova.searchMoviesByTitle("Die Hard")[0].getTitle());
+        //System.out.println("Test searchMoviesByTitle(): " + prova.searchMoviesByTitle("The Fugitive")[0].getTitle());
 
         //Test searchMoviesInYear()
-        System.out.println("Test searchMoviesInYear(): " + prova.searchMoviesInYear(2000)[0].getTitle());
+        //System.out.println("Test searchMoviesInYear(): " + prova.searchMoviesInYear(2000)[0].getTitle());
 
         //Test searchMoviesDirectedBy()
-        System.out.println("Test searchMoviesDirectedBy(): " + prova.searchMoviesDirectedBy("Brian De Palma")[0].getTitle());
+        //System.out.println("Test searchMoviesDirectedBy(): " + prova.searchMoviesDirectedBy("Brian De Palma")[0].getTitle());
 
         //Test searchMoviesStarredBy()
-        System.out.println("Test searchMoviesStarredBy(): " + prova.searchMoviesStarredBy("Robert De Niro")[1].getTitle());
+        //System.out.println("Test searchMoviesStarredBy(): " + prova.searchMoviesStarredBy("Robert De Niro")[1].getTitle());
 
-        Sort p = new QuickSort();
-        p.sort(prova.movies.values().toArray(new Movie[0]));
+        //Sort p = new QuickSort();
 
         //Test clear()
         //prova.clear();
+        prova.stampa(prova.movies);
         prova.movies.stampaLista();
+        prova.people.stampaLista();
 
         //Test salva nuovo file
         //prova.saveToFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));

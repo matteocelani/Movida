@@ -31,17 +31,15 @@ public class DetailPerson extends Person {
         this.actor = actor;
     }
 
-    public Integer getNumMov() {
+    public int getNumMov() {
         return numMov;
     }
 
-    public void addMovie() {
-        this.numMov++;
+    public int addMovie() {
+        return this.numMov++;
     }
 
-    public void removeMovie() {
-        this.numMov--;
-    }
+    public int removeMovie() { return this.numMov--; }
 
     public Boolean getActor() {
         return this.actor;

@@ -2,6 +2,6 @@ package movida.dalessandrocelani;
 
 import movida.commons.Movie;
 
-public abstract class Sort {
-    public abstract void sort(Movie m[]);
+public interface Sort {
+    void sort(ListaCollegataNonOrdinata<String, Movie> m);
 }

@@ -16,8 +16,6 @@ import java.util.*;
  * COMMENTI DA ELIMINARE ALLA CONSEGNA
  * ULTIMA MODIFICA: 18/01/2021
  * ************************************************
- *  TODO:Perdiamo l'ultimo elemento dell'array quando facciamo put
- *      Non funziona delete
  *
  *  ************************************************
  *  DATA ULTIMO TEST: 18/01/2021
@@ -39,9 +37,10 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
         if (this.start == null) {       //Se la lista è vuota, start==null, allora ritorna false
             return false;
         } else {                    //Altrimenti scannerizzo la lista
-            for(Node<K,V> iter=this.start; iter.next != null; iter = iter.next){
+            Node<K,V> iter;
+            for(iter=this.start; iter != null; iter = iter.next){
                 if (key.equals(iter.getKey())) {         //Se la chive in input corrisponde alla chiave del nodo corrente
-                    return true;     //Ritorna true
+                    return true;                         //Ritorna true
                 }
             }
         }
@@ -70,18 +69,14 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
         iter.next = newNode;
         this.size++;
     }
-
     @Override
     public V get(K key) {
         if (this.start == null) {       //Se la lista è vuota, start==null, allora ritorna null
             return null;
         } else {                    //Altrimenti scannerizzo la lista
-            for(Node<K,V> iter=this.start; iter.next != null; iter = iter.next){
+            Node<K,V> iter;
+            for(iter=this.start; iter != null; iter = iter.next){
                 if (key.equals(iter.getKey())) {         //Se la chive in input corrisponde alla chiave del nodo corrente
-                    /**
-                     *                 V find = (V) iter.getValue();
-                     *                 return find;
-                     */
                     return iter.getValue();     //Ritorna il valore del nodo corrente
                 }
             }
@@ -100,6 +95,7 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
             this.start = iter.next;
             this.size --;
             //System.out.print(this.start.getKey() + " ");
+            return;
         }
         /**
          * CASO 2: l'elemento su trova all'interno della lista:
@@ -107,19 +103,22 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
          *      • mantengo il puntatotore al nodo corrente e precedente
          *      • se trovo la chiave sposto il puntatore a quello successivo
          **/
-        while (iter != null && !key.equals(iter.getKey())) {
+        while (iter.next != null && !key.equals(iter.next.getKey())) {
             /**
              * se iter non contiene la chiave scorro al nodo successivo
              **/
-            iter.prev = iter;
             iter = iter.next;
         }
         /**
          * se la chiave è presente si trova in iter, quindi non è null
          * quindi iter viene staccato dalla lista
          **/
-        if (iter != null) {
-            iter.prev = iter.next;
+        if (iter != null && iter.next.next == null) {
+            iter.next.next = null;
+            iter.next = iter.next.next;
+            this.size --;
+        } else if (iter != null && iter.next.next != null) {
+            iter.next = iter.next.next;
             this.size --;
         }
     }
@@ -131,16 +130,15 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
         while ( iter.next != null ) {
             values.add((V) iter.getValue());
             iter = iter.next;
-        } /*
-        for(Node<K,V> iter=start; iter.next != null; iter = iter.next){
-            values.add((V) iter.getValue());
-        }*/
+        }
+        values.add((V) iter.getValue());
         return values;
     }
 
     public Set<K> keySet() {
         Set keys = new LinkedHashSet();
-        for(Node<K,V> iter= this.start; iter.next != null; iter = iter.next){
+        Node<K,V> iter;
+        for( iter= this.start; iter != null; iter = iter.next){
             keys.add((K) iter.getKey());
         }
         return keys;
@@ -155,6 +153,7 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
             System.out.println(iter.getKey() + " - " + iter.getValue() );
             iter = iter.next;
         }
+        System.out.println(iter.getKey() + " - " + iter.getValue() );
 
         System.out.println("\n ------ FINE STAMPA LISTA ------- \n");
     }

@@ -2,18 +2,18 @@ package movida.dalessandrocelani;
 
 import movida.commons.Movie;
 
-public class QuickSort extends Sort{
+public class QuickSort implements Sort{
 
-    public void quicksort(Movie X[], int b, int e) {
+    public void QuickSort(Movie X[], int b, int e) {
         if (b<e) {
-            int partitionIndex = partition(X, b, e);
+            int partitionIndex = this.partition(X, b, e);
 
-            quicksort(X, b, partitionIndex-1);
-            quicksort(X, partitionIndex+1, e);
+            QuickSort(X, b, partitionIndex-1);
+            QuickSort(X, partitionIndex+1, e);
         }
     }
 
-    private int partition(Movie X[], int b, int e) {
+    int partition(Movie X[], int b, int e) {
         Movie pivot = X[e];
         int i = b-1;
 
@@ -33,7 +33,19 @@ public class QuickSort extends Sort{
         return i+1;
     }
 
-    public void sort(Movie m[]) {
-        this.quicksort(m, 0, m.length-1);
+    @Override
+    public void sort(ListaCollegataNonOrdinata<String, Movie> m) {
+
+        Movie[] x = m.values().toArray(new Movie[0]);
+        this.QuickSort(x, 0, x.length-1);
+
+        m = new ListaCollegataNonOrdinata<>();
+
+        for(int i=0 ; i<= x.length-1 ; i++) {
+
+            String keyTitle = x[i].getTitle().toLowerCase().trim().replaceAll("\\s", "");
+            m.put(keyTitle, x[i]);
+        }
+
     }
 }
