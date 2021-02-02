@@ -19,8 +19,7 @@ import java.util.*;
  * ULTIMA MODIFICA: 18/01/2021
  * ************************************************
  *
- * TODO: IMovidaSearch (50%),
- *  Alberi23 (tutto),
+ * TODO: Alberi23 (tutto),
  *  IMovidaCollaboration (tutto)
  *
  * ************************************************
@@ -121,11 +120,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig {
     }
 
     //Cancella tutti i dati.
-    public void clear() {
-        this.dbutils = new DBUtils();
-        this.movies = new ListaCollegataNonOrdinata<>();
-        this.people = new ListaCollegataNonOrdinata<>();
-    }
+    public void clear() { new MovidaCore(); }
 
     //Restituisce il numero di film
     public int countMovies() { return this.movies.size(); }
@@ -161,21 +156,17 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig {
     public Movie getMovieByTitle(String title){ return this.movies.get(title); }
 
     //Restituisce il record associato ad una persona, attore o regista
-    public Person getPersonByName(String name) {
-        return this.people.get(name);
-    }
+    public Person getPersonByName(String name) { return this.people.get(name); }
 
     //Restituisce il vettore di tutti i film
-    public Movie[] getAllMovies() {
-        return this.movies.values().toArray(new Movie[0]);
-    }
+    public Movie[] getAllMovies() { return this.movies.values().toArray(new Movie[0]); }
 
     //Restituisce il vettore di tutte le persone
-    public Person[] getAllPeople() {
-        return this.people.values().toArray(new Person[0]);
-    }
+    public Person[] getAllPeople() { return this.people.values().toArray(new Person[0]); }
 
+    //-------------------------------------------------------------
     //MOVIDA SEARCH
+    //-------------------------------------------------------------
     //Ricerca film per titolo.
     @Override
     public Movie[] searchMoviesByTitle(String title) {
@@ -212,7 +203,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig {
     //Ricerca film per regista.
     @Override
     public Movie[] searchMoviesDirectedBy(String name) {
-        ArrayList<Movie> x = new ArrayList<>();
+        LinkedList<Movie> x = new LinkedList<>();
         Movie[] m = this.movies.values().toArray(new Movie[0]);
         //Trasformo il Regista inserito
         String low = name.toLowerCase().trim().replaceAll("\\s","");
@@ -231,7 +222,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig {
     //Ricerca film per attore.
     @Override
     public Movie[] searchMoviesStarredBy(String name) {
-        ArrayList<Movie> x = new ArrayList<>();
+        LinkedList<Movie> x = new LinkedList<>();
         Movie[] m = this.movies.values().toArray(new Movie[0]);
         //Trasformo l'Attore inserito
         String low = name.toLowerCase().trim().replaceAll("\\s","");
@@ -253,31 +244,69 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig {
     //Ricerca film più votati.
     @Override
     public Movie[] searchMostVotedMovies(Integer N) {
-        Movie[] mov = new Movie[N];
+        LinkedList<Movie> x = new LinkedList<>();
         Movie[] list = this.movies.values().toArray(new Movie[0]);
+        for (int i = 1; i < list.length; i++) {
+            for (int j = 1; j <= list.length - 1; j ++) {
+                if (list[j-1].getVotes() <= list[j].getVotes() ) {
+                    Movie temp = list[j-1];
+                    list[j-1] = list[j];
+                    list[j] = temp;
+                }
+            }
+        }
+        for (int i = 0; i < N ; i++) {
+            x.add(list[i]);
+        }
 
-        return new Movie[0];
+        return x.toArray(new Movie[0]);
     }
 
     //Ricerca film più recenti.
     @Override
     public Movie[] searchMostRecentMovies(Integer N) {
-        Movie[] mov = new Movie[N];
+        LinkedList<Movie> x = new LinkedList<>();
         Movie[] list = this.movies.values().toArray(new Movie[0]);
+        for (int i = 1; i < list.length; i++) {
+            for (int j = 1; j <= list.length - 1; j ++) {
+                if (list[j-1].getYear() <= list[j].getYear() ) {
+                    Movie temp = list[j-1];
+                    list[j-1] = list[j];
+                    list[j] = temp;
+                }
+            }
+        }
+        for (int i = 0; i < N ; i++) {
+            x.add(list[i]);
+        }
 
-        return new Movie[0];
+        return x.toArray(new Movie[0]);
     }
 
     //Ricerca gli attori più attivi.
     @Override
     public Person[] searchMostActiveActors(Integer N) {
-        Movie[] mov = new Movie[N];
-        Movie[] list = this.movies.values().toArray(new Movie[0]);
+        LinkedList<Person> x = new LinkedList<>();
+        DetailPerson[] list = this.people.values().toArray(new DetailPerson[0]);
+        for (int i = 1; i < list.length; i++) {
+            for (int j = 1; j <= list.length - 1; j ++) {
+                if (list[j-1].getNumMov() <= list[j].getNumMov() ) {
+                    DetailPerson temp = list[j-1];
+                    list[j-1] = list[j];
+                    list[j] = temp;
+                }
+            }
+        }
+        for (int i = 0; i < N ; i++) {
+            x.add(list[i]);
+        }
 
-        return new Person[0];
+        return x.toArray(new Person[0]);
     }
 
-    //IMOVIDA Config
+    //-------------------------------------------------------------
+    //IMOVIDA CONFIG
+    //-------------------------------------------------------------
 
     @Override
     public boolean setSort(SortingAlgorithm a) {
@@ -316,8 +345,8 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig {
         MovidaCore prova = new MovidaCore();
         System.out.println("Inizio");
         //Test lettura file
-        //prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
-        prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
+        prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
+        //prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
 
         prova.stampa(prova.movies);
 
@@ -354,16 +383,24 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig {
         System.out.println(prova.countPeople());*/
 
         //Test searchMoviesByTitle()
-        //System.out.println("Test searchMoviesByTitle(): " + prova.searchMoviesByTitle("The Fugitive")[0].getTitle());
+        System.out.println("Test searchMoviesByTitle(): " + prova.searchMoviesByTitle("The Fugitive")[0].getTitle());
 
         //Test searchMoviesInYear()
-        //System.out.println("Test searchMoviesInYear(): " + prova.searchMoviesInYear(2000)[0].getTitle());
+        System.out.println("Test searchMoviesInYear(): " + prova.searchMoviesInYear(2000)[0].getTitle());
 
         //Test searchMoviesDirectedBy()
-        //System.out.println("Test searchMoviesDirectedBy(): " + prova.searchMoviesDirectedBy("Brian De Palma")[0].getTitle());
+        System.out.println("Test searchMoviesDirectedBy(): " + prova.searchMoviesDirectedBy("Brian De Palma")[0].getTitle());
 
         //Test searchMoviesStarredBy()
-        //System.out.println("Test searchMoviesStarredBy(): " + prova.searchMoviesStarredBy("Robert De Niro")[1].getTitle());
+        System.out.println("Test searchMoviesStarredBy(): " + prova.searchMoviesStarredBy("Robert De Niro")[1].getTitle());
+
+        //Test searchMostVotedMovie()
+        System.out.println("Test searchMostVotedMovie(): " + prova.searchMostVotedMovies(2)[0].getTitle());
+        System.out.println("Test searchMostVotedMovie(): " + prova.searchMostVotedMovies(2)[1].getTitle());
+
+        //Test searchMostActiveActor()
+        System.out.println("Test searchMostActiveActor(): " + prova.searchMostActiveActors(2)[0].getName());
+        System.out.println("Test searchMostActiveActor(): " + prova.searchMostActiveActors(2)[1].getName());
 
         //Sort p = new QuickSort();
 
