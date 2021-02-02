@@ -94,7 +94,6 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
         if (iter != null && key.equals(iter.getKey())) {
             this.start = iter.next;
             this.size --;
-            //System.out.print(this.start.getKey() + " ");
             return;
         }
         /**

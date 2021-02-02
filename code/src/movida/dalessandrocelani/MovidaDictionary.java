@@ -10,6 +10,7 @@ package movida.dalessandrocelani;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * ************************************************
@@ -34,4 +35,10 @@ public interface MovidaDictionary<K,V> {
     LinkedList<V> values();
 
     int size();
+
+    Set<K> keySet();
+
+    boolean containsKey(K key);
+
+    void stampaLista();
 }

@@ -34,7 +34,7 @@ public class QuickSort implements Sort{
     }
 
     @Override
-    public void sort(ListaCollegataNonOrdinata<String, Movie> m) {
+    public MovidaDictionary sort(MovidaDictionary<String, Movie> m) {
 
         Movie[] x = m.values().toArray(new Movie[0]);
         this.QuickSort(x, 0, x.length-1);
@@ -46,6 +46,6 @@ public class QuickSort implements Sort{
             String keyTitle = x[i].getTitle().toLowerCase().trim().replaceAll("\\s", "");
             m.put(keyTitle, x[i]);
         }
-
+        return m;
     }
 }

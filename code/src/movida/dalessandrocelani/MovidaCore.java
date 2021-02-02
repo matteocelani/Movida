@@ -19,24 +19,27 @@ import java.util.*;
  * ULTIMA MODIFICA: 18/01/2021
  * ************************************************
  *
- * TODO: IMovidaSearch (50%)
- *
+ * TODO: IMovidaSearch (50%),
+ *  Alberi23 (tutto),
+ *  IMovidaCollaboration (tutto)
  *
  * ************************************************
  *  DATA ULTIMO TEST: 18/01/2021
  *  BUILD:
  * ************************************************
 **/
-public class MovidaCore implements IMovidaDB, IMovidaSearch {
+public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig {
 
     private DBUtils dbutils;
-    private ListaCollegataNonOrdinata<String, Movie> movies;
-    private ListaCollegataNonOrdinata<String, DetailPerson> people;
+    private MovidaDictionary<String, Movie> movies;
+    private MovidaDictionary<String, DetailPerson> people;
+    private Sort s;
 
     MovidaCore() {
         this.dbutils = new DBUtils();
-        this.movies = new ListaCollegataNonOrdinata<String, Movie>();
-        this.people = new ListaCollegataNonOrdinata<String, DetailPerson>();
+        this.movies = new ListaCollegataNonOrdinata<>() ;
+        this.people = new ListaCollegataNonOrdinata<>();
+        this.s = new QuickSort();
     }
 
     //Carica i dati da un file, organizzato secondo il formato MOVIDA
@@ -50,34 +53,14 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         //Carico i dati usando loadFilm()
         Movie[] mov = this.dbutils.loadFilm(f);
 
-        /**for (int p = 0 ; p < mov.length ; p++) {
-            System.out.print(mov[p].getTitle() + " \n");
-            System.out.print(mov[p].getYear() + " \n");
-            System.out.print(mov[p].getDirector().getName() + " \n");
-            System.out.print(mov[p].getDetailCast() + " \n");
-            System.out.print(mov[p].getVotes() + " \n");
-            System.out.print(" \n");
-        }**/
-
         for(Movie movie: mov) {
-
-            /**
-            System.out.print(movie.getTitle() + " \n");
-            System.out.print(movie.getYear() + " \n");
-            System.out.print(movie.getDirector().getName() + " \n");
-            System.out.print(movie.getDetailCast() + " \n");
-            System.out.print(movie.getVotes() + " \n");
-            System.out.print("Chiave:" + movie.getTitle().toLowerCase().trim().replaceAll("\\s", "") + "\n");
-            System.out.print("\n");**/
 
             String keyTitle = movie.getTitle().toLowerCase().trim().replaceAll("\\s", "");
             //Se il titolo è già presente: elimino il film con lo stesso titolo e carico il nuovo (aggiornamento)
             /*if ( !this.movies.containsKey(title) ){
                 this.movies.remove(title);
             }*/
-            //System.out.print("-------PUT-------");
             this.movies.put(keyTitle, movie);
-            //System.out.print("\n-------END PUT------- \n");
             System.out.print( movies.size() + "\n");
             System.out.print( movies.keySet() + "\n");
 
@@ -105,7 +88,6 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
                 }
             }
         }
-        //System.out.print("\n" + movies.values().toArray().length + "\n");
 
     }
 
@@ -121,7 +103,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         this.dbutils.save(f, mov);
     }
 
-    public void stampa(ListaCollegataNonOrdinata<String, Movie> films) {
+    public void stampa(MovidaDictionary<String, Movie> films) {
         int i =1;
         for (String film: films.keySet()){
             System.out.print(i + " - ");
@@ -295,12 +277,47 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         return new Person[0];
     }
 
+    //IMOVIDA Config
+
+    @Override
+    public boolean setSort(SortingAlgorithm a) {
+        if( a == SortingAlgorithm.BubbleSort){
+            this.s = new BubbleSort();
+            this.movies = s.sort(this.movies);
+            return true;
+        } else if( a == SortingAlgorithm.QuickSort){
+            this.s = new QuickSort();
+            this.movies = s.sort(this.movies);
+            return true;
+        } else{
+            System.out.print("Algoritmo di ordinamento non trovato. ");
+            System.out.print("Algoritmo di ordinamento di default: QuickSort.");
+        }
+        return false;
+    }
+
+    @Override
+    public boolean setMap(MapImplementation m) {
+        if(m == MapImplementation.ListaNonOrdinata){
+            this.movies = new ListaCollegataNonOrdinata<>();
+            return true;
+        } else if (m == MapImplementation.Alberi23) {
+            this.movies = new Alberi23<>();
+            return true;
+        } else {
+            System.out.print("Implmentazione non trovata. ");
+            System.out.print("Implementazione di default: Lista Collegata Non Ordinata.");
+        }
+        return false;
+    }
+
+
     public static void main(String[] args) {
         MovidaCore prova = new MovidaCore();
         System.out.println("Inizio");
         //Test lettura file
-        prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
-        //prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
+        //prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
+        prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
 
         prova.stampa(prova.movies);
 
@@ -325,7 +342,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         System.out.println("Test countPeople(): " + prova.countPeople());
 
         //Test deleteMovieByTitle()
-        prova.deleteMovieByTitle("thefugitive");
+        /*prova.deleteMovieByTitle("thefugitive");
         prova.deleteMovieByTitle("capefear");
         prova.deleteMovieByTitle("diehard");
         prova.deleteMovieByTitle("scarface");
@@ -334,7 +351,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
         prova.deleteMovieByTitle("whatliesbeneath");
         prova.deleteMovieByTitle("thesixthsense");
         System.out.println(prova.countMovies());
-        System.out.println(prova.countPeople());
+        System.out.println(prova.countPeople());*/
 
         //Test searchMoviesByTitle()
         //System.out.println("Test searchMoviesByTitle(): " + prova.searchMoviesByTitle("The Fugitive")[0].getTitle());
@@ -352,12 +369,17 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch {
 
         //Test clear()
         //prova.clear();
+        prova.setSort(SortingAlgorithm.BubbleSort);
         prova.stampa(prova.movies);
         prova.movies.stampaLista();
         prova.people.stampaLista();
+
+
+
 
         //Test salva nuovo file
         //prova.saveToFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
         System.out.println("Fine");
     }
+
 }
