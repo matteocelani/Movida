@@ -31,14 +31,14 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
 
         Node<K,V> next;
 
-        public Node(K key, V value) {
+        private Node(K key, V value) {
             this.key = key;
             this.value = value;
             this.next = null;
         }
 
-        public K getKey(){ return this.key; }
-        public V getValue(){ return this.value; }
+        private K getKey(){ return this.key; }
+        private V getValue(){ return this.value; }
     }
 
     private Node<K,V> start;
@@ -49,6 +49,7 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
         this.start = null;
     }
 
+    @Override
     public boolean containsKey(K key) {
         if (this.start == null) {       //Se la lista è vuota, start==null, allora ritorna false
             return false;
