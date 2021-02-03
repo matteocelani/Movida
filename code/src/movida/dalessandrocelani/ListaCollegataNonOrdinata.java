@@ -25,6 +25,22 @@ import java.util.*;
 
 public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
 
+    private class Node<K,V> {
+        K key;
+        V value;
+
+        Node<K,V> next;
+
+        public Node(K key, V value) {
+            this.key = key;
+            this.value = value;
+            this.next = null;
+        }
+
+        public K getKey(){ return this.key; }
+        public V getValue(){ return this.value; }
+    }
+
     private Node<K,V> start;
     private int size;
 
@@ -52,7 +68,7 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
     public void put(K key, V value) {
         Node<K,V> newNode = new Node<>(key, value);
 
-        //System.out.print(newNode.getKey() +" - " + newNode.getValue() + "\n" );
+        //System.out.print(newNode.getKey() + " - " + newNode.getValue() + "\n" );
 
         if (this.start == null) {        //Se la lista è vuota, start==null, allora il nostro nodo start punterà direttamente al nodo inserito
             this.start= newNode;
