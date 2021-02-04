@@ -40,8 +40,6 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         Node<K,V> mid;
         Node<K,V> right;
 
-        boolean isLeaf = false;
-
         /**
          * Costruttore di Base, costuisce un nodo vuoto
          */
@@ -101,10 +99,116 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
 
         }
 
+        //Get element
         private K getKeyLeft(){ return this.keyLeft; }
         private V getValueLeft(){ return this.valueLeft; }
         private K getKeyRight(){ return this.keyRight; }
         private V getValueRight(){ return this.valueRight; }
+        private Node getLeftElement() { return new Node(this.keyLeft, this.valueLeft); }
+        private Node getRightElement() { return new Node(this.keyRight, this.valueRight); }
+
+        //Set Element
+        private void setLeftElement(Node element) {
+            this.keyLeft = (K) element.keyLeft;
+            this.valueLeft = (V) element.valueLeft;
+        }
+        private void setRightElement(Node element) {
+            this.keyRight = (K) element.keyLeft;
+            this.valueRight = (V) element.valueLeft;
+        }
+
+        //Get child
+        private Node getLeft(){ return this.left; }
+        private Node getMid(){ return this.mid; }
+        private Node getRight(){ return this.right; }
+
+        //Set child
+        private void setLeft(Node element) { this.left = element; }
+        private void setMid(Node element) { this.mid = element; }
+        private void setRight(Node element) { this.right = element; }
+
+        private boolean isLeaf() {
+            return this.left == null && this.mid == null && this.right == null;
+        }
+
+        private boolean isBalanced() {
+            boolean balanced = false;
+
+            if (isLeaf()) {
+                balanced = true;
+            } else if (this.left.getLeftElement() != null && mid.getLeftElement() != null) {
+                if (this.keyRight != null) {
+                    if (this.right.getRightElement() != null) {
+                        balanced = true;
+                    } else {
+                        balanced = true;
+                    }
+                }
+            }
+            return balanced;
+        }
+
+        private void rebalance() {
+
+            while(!isBalanced()) {
+                if (getLeft().getKeyLeft() == null) {
+                    getLeft().setLeftElement(getLeftElement());
+                    setLeftElement(getMid().getLeftElement());
+
+                    if (getMid().getRightElement() != null) {
+                        getMid().setLeftElement(getMid().getRightElement());
+                        getMid().setRightElement(null);
+                    } else {
+                        getMid().setLeftElement(null);
+                    }
+                } else if (getMid().getLeftElement() == null) {
+                    if (getRightElement() == null) {
+                        if (getLeft().getLeftElement() != null && getLeft().getRightElement() == null && getMid().getLeft() == null ) {
+                            setRightElement(getLeftElement());
+                            setLeftElement(getLeft().getLeftElement());
+
+                            setLeft(null);
+                            setMid(null);
+                            setRight(null);
+                        } else {
+                            getMid().setLeftElement(getLeftElement());
+                            if (getLeft().getRightElement() == null) {
+                                setLeftElement(getLeft().getLeftElement());
+                                getLeft().setLeftElement(null);
+                            } else {
+                                setLeftElement(getLeft().getRightElement());
+                                getLeft().setRightElement(null);
+                            }
+                            if (getLeft().getLeftElement() == null && getMid().getLeftElement() == null) {
+                                setLeft(null);
+                                setMid(null);
+                                setRight(null);
+                            }
+                        }
+                    } else {
+                        getMid().setLeftElement(getRightElement());
+                        setRightElement(getRight().getLeftElement());
+                        if(getRight().getRightElement() != null) {
+                            getRight().setLeftElement(getRight().getRightElement());
+                            getRight().setRightElement(null);
+                        }
+                        else {
+                            getRight().setLeftElement(null);
+                        }
+                    }
+                } else if(getRightElement() != null && getRight().getLeftElement() == null) {
+                    if(getMid().getRightElement() != null) { // (1)
+                        getRight().setLeftElement(getRightElement());
+                        setRightElement(getMid().getRightElement());
+                        getMid().setRightElement(null);
+                    }
+                    else {
+                        getMid().setRightElement(getRightElement());
+                        setRightElement(null);
+                    }
+                }
+            }
+        }
 
         private Boolean is3Node() {
             return this.keyRight != null;
@@ -196,7 +300,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         Node newParent = null;
 
         // Non siamo ancora nel livello più basso dell'albero
-        if(current.isLeaf == false) {
+        if(current.isLeaf() == false) {
             Node sonAscended = null;
 
             if (current.compareLeft(newNode) == 0 ||
@@ -216,13 +320,11 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
                     // Il nuovo elemento, in questo caso, è sempre minore rispetto a current.left
                     if (current.is2Node()) {
 
-                        current.keyRight = current.keyLeft;  // sposto l'elemento a sinistra di current a destra
-                        current.valueRight = current.valueLeft;
-                        current.keyLeft = sonAscended.keyLeft;
-                        current.valueLeft = sonAscended.valueLeft;
-                        current.right = current.mid;
-                        current.mid = sonAscended.mid;
-                        current.left = sonAscended.left;
+                        current.setRightElement(current);   // sposto l'elemento a sinistra di current a destra
+                        current.setLeftElement(sonAscended);
+                        current.setRight(current.mid);
+                        current.setMid(sonAscended.mid);
+                        current.setLeft(sonAscended.left);
                     } else { // In this case we have a new split, so the current element in the left will go up
 
                         // Copio la parte destra del sottoalbero
@@ -240,10 +342,9 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
 
                         // The right element is empty, so we can set the ascended element in the left and the existing left element into the right
                         if (current.is2Node()) {
-                            current.keyRight = sonAscended.keyLeft;
-                            current.valueRight = sonAscended.valueLeft;
-                            current.right = sonAscended.mid;
-                            current.mid = sonAscended.left;
+                            current.setRightElement(sonAscended);
+                            current.setRight(sonAscended.mid);
+                            current.setMid(sonAscended.left);
                         }
                         else { // Another case we have to split again
 
@@ -274,16 +375,12 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
 
                 // if the current left element is bigger than the new one --> we shift the left element to the right
                 if (current.compareLeft(newNode) == 1) {
-
-                    current.keyRight = current.keyLeft;
-                    current.valueRight = current.valueLeft;
-                    current.keyLeft = newNode.keyLeft;
-                    current.valueLeft = newNode.valueLeft;
+                    current.setRightElement(current);
+                    current.setLeftElement(newNode);
                 }
                 // if the new element is bigger, we add it in the right directly
                 else if (current.compareLeft(newNode) == -1){
-                    current.keyRight = newNode.keyLeft;
-                    current.valueRight = newNode.valueLeft;
+                    current.setRightElement(newNode);
                 }
             }
             // Case 3-node: there are 2 elements in the node and we want to add another one. We have to split the node

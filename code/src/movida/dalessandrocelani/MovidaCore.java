@@ -345,8 +345,8 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig {
         MovidaCore prova = new MovidaCore();
         System.out.println("Inizio");
         //Test lettura file
-        //prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
-        prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
+        prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
+        //prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
 
         prova.stampa(prova.movies);
 
