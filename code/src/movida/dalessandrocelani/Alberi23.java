@@ -8,6 +8,8 @@
 
 package movida.dalessandrocelani;
 
+import movida.commons.Movie;
+
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -104,8 +106,8 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         private V getValueLeft(){ return this.valueLeft; }
         private K getKeyRight(){ return this.keyRight; }
         private V getValueRight(){ return this.valueRight; }
-        private Node getLeftElement() { return new Node(this.keyLeft, this.valueLeft); }
-        private Node getRightElement() { return new Node(this.keyRight, this.valueRight); }
+        private Node getLeftElement() { if (this.keyLeft == null && this.keyRight == null) {return null;}else return new Node(this.keyLeft, this.valueLeft); }
+        private Node getRightElement() { if (this.keyLeft == null && this.keyRight == null) {return null;}else return new Node(this.keyRight, this.valueRight); }
 
         //Set Element
         private void setLeftElement(Node element) {
@@ -127,10 +129,16 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         private void setMid(Node element) { this.mid = element; }
         private void setRight(Node element) { this.right = element; }
 
+        /**
+         * @return true se è una foglia e false altrimenti
+         */
         private boolean isLeaf() {
             return this.left == null && this.mid == null && this.right == null;
         }
 
+        /**
+         * @return true se l'albero è bilanciato false altrimenti
+         */
         private boolean isBalanced() {
             boolean balanced = false;
 
@@ -148,6 +156,9 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
             return balanced;
         }
 
+        /**
+         * TODO: Inserire Commenti
+         */
         private void rebalance() {
 
             while(!isBalanced()) {
@@ -210,23 +221,33 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
             }
         }
 
+        /**
+         * @return true se è un Nodo 3, false altrimenti
+         */
         private Boolean is3Node() {
             return this.keyRight != null;
         }
 
+        /**
+         * @return true se è un Nodo 2, false altrimenti
+         */
         private Boolean is2Node() {
             return this.keyRight == null;
         }
 
-
+        /**
+         * Compara la chiave sinistra o destra con una chiave di un nodo preso in imput
+         * @param compare nodo con la chiave da comparare
+         * @return TODO: cosa ritorna?? (da sistamare sono stanco e fatto)
+         */
         private int compareLeft(Node compare) {
             return this.keyLeft.toString().compareTo(compare.getKeyLeft().toString());
         }
-
         private int compareRight(Node compare) {
             return this.keyRight.toString().compareTo(compare.getKeyLeft().toString());
         }
     }
+
 
     private Node<K,V> root;
     private int size;
@@ -234,6 +255,173 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
     public Alberi23() {
         this.root = new Node<>();
         this.size = 0;
+    }
+
+    @Override
+    public void put(K key, V value) {
+        Node element = new Node(key, value);
+        if(this.root == null || this.root.getLeftElement() == null){ // first case
+            if(this.root == null) {
+                this.root = new Node();
+            }
+            this.root.setLeftElement(element);
+        }
+        else {
+            Node newRoot = addElement(this.root, element); // Immersion
+            if(newRoot != null){
+                this.root = newRoot;
+            }
+        }
+        this.size++;
+    }
+
+    @Override
+    public V get(K key) {
+        return iGet(this.root, key);
+    }
+
+    @Override
+    public void remove(K key) {
+
+    }
+
+    @Override
+    public LinkedList<V> values() {
+        LinkedList<V> values = new LinkedList<>();
+        return null;
+    }
+
+    @Override
+    public int size() {
+        return this.size;
+    }
+
+    @Override
+    public Set<K> keySet() {
+        return null;
+    }
+
+    @Override
+    public boolean containsKey(K key) {
+        return false;
+    }
+
+    @Override
+    public void stampaLista() {
+
+    }
+
+    /**
+     * TODO: Inserire commenti generali su add element
+     *
+     * @param current
+     * @param newNode
+     * @return
+     */
+    private Node addElement(Node current, Node newNode) {
+        Node newParent = null;
+        // Non siamo ancora nel livello più basso dell'albero
+        if(current.isLeaf() == false) {
+            Node sonAscended = null;
+            if (current.compareLeft(newNode) == 0 ||
+                    (current.is3Node() && current.compareRight(newNode) == 0)) {
+                // L'emento aggiunto già esiste. TODO:AGGIUNGERE UN MESSAGGIO DI ERRORE
+            }
+            // Il nuovo elemento è minore dell'elemento a sinistra
+            else if (current.compareLeft(newNode) >= 0) {
+                sonAscended = addElement(current.left, newNode);
+                // Case sonAscended != null --> L'elemento è stato aggiunto a un Nodo 3 (ci sono due elementi)
+                if (sonAscended != null) { // A new node comes from the left branch
+                    // Il nuovo elemento, in questo caso, è sempre minore rispetto a current.left
+                    if (current.is2Node()) {
+                        current.setRightElement(current);   // sposto l'elemento a sinistra di current a destra
+                        current.setLeftElement(sonAscended);
+                        current.setRight(current.mid);
+                        current.setMid(sonAscended.mid);
+                        current.setLeft(sonAscended.left);
+                    } else { // In this case we have a new split, so the current element in the left will go up
+                        // Copio la parte destra del sottoalbero
+                        Node rightCopy = new Node(support(current, false), null, current.mid, current.right);
+                        // Creo la nuova struttura attaccando la parte destra
+                        newParent = new Node(support(current, true), null, sonAscended, rightCopy);
+                    }
+                }
+            } else if (current.is2Node() || (current.is3Node() && current.compareRight(newNode) >= 0)) {
+                    sonAscended = addElement(current.mid, newNode);
+                    if (sonAscended != null) { // A new split
+                        // The right element is empty, so we can set the ascended element in the left and the existing left element into the right
+                        if (current.is2Node()) {
+                            current.setRightElement(sonAscended);
+                            current.setRight(sonAscended.mid);
+                            current.setMid(sonAscended.left);
+                        }
+                        else { // Another case we have to split again
+                            Node left = new Node(support(current, true), new Node(), current.left, sonAscended.left);
+                            Node mid = new Node(support(current, false), new Node(), sonAscended.mid, current.right);
+                            newParent = new Node(support(sonAscended, true), new Node(), left, mid);
+                        }
+                    }
+            } else if (current.is3Node() && current.compareRight(newNode) < 0) {
+                    sonAscended = addElement(current.right, newNode);
+                    if (sonAscended != null) { // Split, the right element goes up
+                        Node leftCopy   = new Node(support(current, true), new Node(), current.left, current.mid);
+                        newParent       = new Node(support(current, false), new Node(), leftCopy, sonAscended);
+                    }
+            }
+        }
+        else { // Siamo al livello più basso dell'albero
+            // L'elemento già esiste
+            if (current.compareLeft(newNode) == 0 || (current.is3Node() && current.compareRight(newNode) == 0)) {
+                //TODO:AGGIUNGERE MESSAGGIO ERRORE
+            }
+            else if (current.is2Node()) { // an easy case, there is not a right element
+                // if the current left element is bigger than the new one --> we shift the left element to the right
+                if (current.keyLeft.toString().compareTo(newNode.getKeyLeft().toString()) >= 0) {
+                    current.setRightElement(current);
+                    current.setLeftElement(newNode);
+                }
+                // if the new element is bigger, we add it in the right directly
+                else if (current.compareLeft(newNode) < 0){
+                    current.setRightElement(newNode);
+                }
+            }
+            // Case 3-node: there are 2 elements in the node and we want to add another one. We have to split the node
+            else newParent = split(current, newNode);
+        }
+        return newParent;
+    }
+
+    /**
+     * Funzione che prende in imput un nodo con due elementi e li separa
+     * TODO:Finire di scrivere commenti
+     * @param current
+     * @param insert
+     * @return
+     */
+    public Node split(Node current, Node insert) {
+        Node newNode = new Node();
+
+        //L'elemento di sinistra è maggiore, quindi salirà lasciando l'elemento nuovo sulla sinistra
+        if(current.compareLeft(insert) >= 0){
+            Node left = new Node(insert, new Node());
+            Node right = new Node(support(current, false), new Node());
+            newNode = new Node(support(current, true), new Node(), left, right);
+
+        } else if(current.compareLeft(insert) < 0){
+
+            //Il nuovo elemento è maggiore rispetto all'elemento destro di current, ma minore rispetto l'elemento a destra. Il nuovo elemento va su.
+            if(current.compareRight(insert) >= 0){
+                Node left = new Node(support(current, true), new Node());
+                Node right = new Node(support(current, false), new Node());
+                newNode = new Node(insert, new Node(), left, right);
+
+            } else { //Il nuovo elemento è il più grande, quindi l'elemento destro di current va su
+                Node left = new Node(support(current, true), new Node());
+                Node right = new Node(insert, new Node());
+                newNode = new Node(support(current, false), new Node(), left, right);
+            }
+        }
+        return newNode;
     }
 
     /**
@@ -255,175 +443,45 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         }
     }
 
-    public Node split(Node current, Node insert) {
-        Node newNode = new Node();
-
-        //L'elemento di sinistra è maggiore, quindi salirà lasciando l'elemento nuovo sulla sinistra
-        if(current.compareLeft(insert) == 1){
-            Node left = new Node(insert, null);
-            Node right = new Node(support(current, false), null);
-            newNode = new Node(support(current, true), null, left, right);
-
-        } else if(current.compareLeft(insert) == -1){
-
-            //Il nuovo elemento è maggiore rispetto all'elemento destro di current, ma minore rispetto l'elemento a destra. Il nuovo elemento va su.
-            if(current.compareRight(insert) == 1){
-                Node left = new Node(support(current, true), null);
-                Node right = new Node(support(current, false), null);
-                newNode = new Node(insert, null, left, right);
-
-            } else { //Il nuovo elemento è il più grande, quindi l'elemento destro di current va su
-                Node left = new Node(support(current, true), null);
-                Node right = new Node(insert, null);
-                newNode = new Node(support(current, false), null, left, right);
-            }
-        }
-        return newNode;
-    }
-
-    @Override
-    public void put(K key, V value) {
-        Node element = new Node(key, value);
-        if(this.root == null || this.root.getLeftElement() == null){ // first case
-            if(this.root == null) {
-                this.root = new Node();
-            }
-            this.root.setLeftElement(element);
-        }
-        else {
-            Node newRoot = addElement(this.root, element); // Immersion
-            if(newRoot != null){
-                this.root = newRoot;
-            }
-        }
-        this.size++;
-    }
-
-    private Node addElement(Node current, Node newNode) {
-        Node newParent = null;
-
-        // Non siamo ancora nel livello più basso dell'albero
-        if(current.isLeaf() == false) {
-            Node sonAscended = null;
-
-            if (current.compareLeft(newNode) == 0 ||
-                    (current.is3Node() && current.compareRight(newNode) == 0)) {
-
-                // L'emento aggiunto già esiste. AGGIUNGERE UN MESSAGGIO DI ERRORE
-            }
-
-            // Il nuovo elemento è minore dell'elemento a sinistra
-            else if (current.compareLeft(newNode) == 1) {
-
-                sonAscended = addElement(current.left, newNode);
-
-                // Case sonAscended != null --> L'elemento è stato aggiunto a un Nodo 3 (ci sono due elementi)
-                if (sonAscended != null) { // A new node comes from the left branch
-
-                    // Il nuovo elemento, in questo caso, è sempre minore rispetto a current.left
-                    if (current.is2Node()) {
-
-                        current.setRightElement(current);   // sposto l'elemento a sinistra di current a destra
-                        current.setLeftElement(sonAscended);
-                        current.setRight(current.mid);
-                        current.setMid(sonAscended.mid);
-                        current.setLeft(sonAscended.left);
-                    } else { // In this case we have a new split, so the current element in the left will go up
-
-                        // Copio la parte destra del sottoalbero
-                        Node rightCopy = new Node(support(current, false), null, current.mid, current.right);
-
-                        // Creo la nuova struttura attaccando la parte destra
-                        newParent = new Node(support(current, true), null, sonAscended, rightCopy);
-                    }
-                }
-            } else if (current.is2Node() || (current.is3Node() && current.compareRight(newNode) == 1)) {
-
-                    sonAscended = addElement(current.mid, newNode);
-
-                    if (sonAscended != null) { // A new split
-
-                        // The right element is empty, so we can set the ascended element in the left and the existing left element into the right
-                        if (current.is2Node()) {
-                            current.setRightElement(sonAscended);
-                            current.setRight(sonAscended.mid);
-                            current.setMid(sonAscended.left);
-                        }
-                        else { // Another case we have to split again
-
-                            Node left = new Node(support(current, true), null, current.left, sonAscended.left);
-                            Node mid = new Node(support(current, false), null, sonAscended.mid, current.right);
-                            newParent = new Node(support(sonAscended, true), null, left, mid);
-                        }
-                    }
-            } else if (current.is3Node() && current.compareRight(newNode) == -1) {
-
-                    sonAscended = addElement(current.right, newNode);
-
-                    if (sonAscended != null) { // Split, the right element goes up
-
-                        Node leftCopy   = new Node(support(current, true), null, current.left, current.mid);
-                        newParent       = new Node(support(current, false), null, leftCopy, sonAscended);
-                    }
-            }
-        }
-        else { // Siamo al livello più basso dell'albero
-
-            // L'elemento già esiste
-            if (current.compareLeft(newNode) == 0 || (current.is3Node() && current.compareRight(newNode) == 0)) {
-
-                //AGGIUNGERE MESSAGGIO ERRORE
-            }
-            else if (current.is2Node()) { // an easy case, there is not a right element
-
-                // if the current left element is bigger than the new one --> we shift the left element to the right
-                if (current.compareLeft(newNode) == 1) {
-                    current.setRightElement(current);
-                    current.setLeftElement(newNode);
-                }
-                // if the new element is bigger, we add it in the right directly
-                else if (current.compareLeft(newNode) == -1){
-                    current.setRightElement(newNode);
-                }
-            }
-            // Case 3-node: there are 2 elements in the node and we want to add another one. We have to split the node
-            else newParent = split(current, newNode);
-        }
-        return newParent;
-    }
-
-    @Override
-    public V get(K key) {
-        return null;
-    }
-
-    @Override
-    public void remove(K key) {
-
-    }
-
-    @Override
-    public LinkedList<V> values() {
-        return null;
-    }
-
-    @Override
-    public int size() {
-        return 0;
-    }
-
-    @Override
-    public Set<K> keySet() {
-        return null;
-    }
-
-    @Override
-    public boolean containsKey(K key) {
+    /**
+     * @return true se l'albero è vuoto false altrimenti
+     */
+    public boolean isEmpty() {
+        if(this.root == null) return true;
+        if(this.root.getLeftElement() == null) return true;
         return false;
     }
 
-    @Override
-    public void stampaLista() {
-
+    /**
+     * TODO: commento
+     *
+     * @param element
+     * @param key
+     * @return
+     */
+    private V iGet(Node element, K key) {
+        Node x = new Node();
+        x.keyLeft = key;
+        V find = null;
+        if(element != null) {
+            if(element.keyLeft != null && element.keyLeft.equals(key)) {
+                find = (V) element.valueLeft;
+            } else {
+                if (element.keyRight != null && element.keyRight.equals(key)) {
+                    find = (V) element.valueRight;
+                } else {
+                    if (element.compareLeft(x) >= 0) {
+                        find = (V) iGet(element.left, key);
+                    } else if (element.right == null || element.compareRight(x) >= 0){
+                        find = (V) iGet(element.mid, key);
+                    } else if (element.compareRight(x) < 0) {
+                        find = (V) iGet(element.right, key);
+                    }
+                    else return null;
+                }
+            }
+        }
+        return find;
     }
+
 }

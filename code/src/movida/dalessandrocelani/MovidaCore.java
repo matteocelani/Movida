@@ -19,8 +19,8 @@ import java.util.*;
  * ULTIMA MODIFICA: 18/01/2021
  * ************************************************
  *
- * TODO: Alberi23 (tutto),
- *  IMovidaCollaboration (tutto)
+ * TODO: Alberi23 (25%),
+ *  IMovidaCollaboration (0%)
  *
  * ************************************************
  *  DATA ULTIMO TEST: 18/01/2021
@@ -34,11 +34,15 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig {
     private MovidaDictionary<String, DetailPerson> people;
     private Sort s;
 
+    private MovidaDictionary<String, Movie> test;
+
     MovidaCore() {
         this.dbutils = new DBUtils();
         this.movies = new ListaCollegataNonOrdinata<>() ;
         this.people = new ListaCollegataNonOrdinata<>();
         this.s = new QuickSort();
+
+        this.test = new Alberi23<>();
     }
 
     //Carica i dati da un file, organizzato secondo il formato MOVIDA
@@ -340,6 +344,20 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig {
         return false;
     }
 
+    public Alberi23 addAll(MovidaDictionary<String, Movie> films) {
+        for (String film: films.keySet()){
+            test.put(film, films.get(film));
+        }
+        return (Alberi23) test;
+    }
+
+    public void testGet(MovidaDictionary<String, Movie> films) {
+        for (String film: films.keySet()){
+            System.out.print(test.get(film).getTitle() + " - ");
+        }
+    }
+
+
 
     public static void main(String[] args) {
         MovidaCore prova = new MovidaCore();
@@ -411,6 +429,12 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig {
         prova.movies.stampaLista();
         prova.people.stampaLista();
 
+
+
+        //Test Alberi 23
+        prova.addAll(prova.movies);
+        //Test get Alberi 23
+        prova.testGet(prova.movies);
 
 
 
