@@ -283,17 +283,20 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
 
     @Override
     public void put(K key, V value) {
-
-       /* if(this.root.leftElement == null){
-            Node<K,V> newNode = new Node<>(key, value);
-            this.root = newNode;
-            this.size++;
-        } else{
-            Node newRoot= new Node();
-            newRoot.left = this.root;
-            this.root = newRoot;
-            size++;
-        }*/
+        Node element = new Node(key, value);
+        if(this.root == null || this.root.getLeftElement() == null){ // first case
+            if(this.root == null) {
+                this.root = new Node();
+            }
+            this.root.setLeftElement(element);
+        }
+        else {
+            Node newRoot = addElement(this.root, element); // Immersion
+            if(newRoot != null){
+                this.root = newRoot;
+            }
+        }
+        this.size++;
     }
 
     private Node addElement(Node current, Node newNode) {
