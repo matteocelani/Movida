@@ -1,11 +1,3 @@
-//
-//  DBUtils.java
-//  Movida
-//
-//  Created by Matteo Celani on 27/10/2020.
-//  Copyright © 2020 Matteo Celani Francesco D'Alessandro. All rights reserved.
-//
-
 package movida.dalessandrocelani;
 import movida.commons.*;
 

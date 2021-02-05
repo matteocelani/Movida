@@ -1,11 +1,3 @@
-//
-//  MovidaDictionary.java
-//  Movida
-//
-//  Created by Francesco D'Alessandro on 04/12/2020.
-//  Copyright © 2020 Matteo Celani Francesco D'Alessandro. All rights reserved.
-//
-
 package movida.dalessandrocelani;
 
 import java.security.Key;
@@ -158,20 +150,6 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
             keys.add((K) iter.getKey());
         }
         return keys;
-    }
-
-    public void stampaLista() {
-        System.out.println("\n -------- STAMPA LISTA ---------");
-
-        Node<K,V> iter = this.start;
-
-        while (iter.next != null) {
-            System.out.println(iter.getKey() + " - " + iter.getValue() );
-            iter = iter.next;
-        }
-        System.out.println(iter.getKey() + " - " + iter.getValue() );
-
-        System.out.println("\n ------ FINE STAMPA LISTA ------- \n");
     }
 
     @Override

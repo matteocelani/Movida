@@ -1,11 +1,3 @@
-//
-//  MovidaDictionary.java
-//  Movida
-//
-//  Created by Francesco D'Alessandro on 01/02/2021.
-//  Copyright © 2020 Matteo Celani Francesco D'Alessandro. All rights reserved.
-//
-
 package movida.dalessandrocelani;
 
 import movida.commons.Movie;

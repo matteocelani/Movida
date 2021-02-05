@@ -1,11 +1,3 @@
-//
-//  MovidaDictionary.java
-//  Movida
-//
-//  Created by Francesco D'alessandro on 02/12/2021.
-//  Copyright © 2020 Matteo Celani Francesco D'Alessandro. All rights reserved.
-//
-
 package movida.dalessandrocelani;
 
 import movida.commons.Movie;
@@ -367,10 +359,6 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         } else return false;
     }
 
-    @Override
-    public void stampaLista() {
-
-    }
 
     /**
      * TODO: Inserire commenti generali su add element
@@ -437,7 +425,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
             }
             else if (current.is2Node()) { // an easy case, there is not a right element
                 // if the current left element is bigger than the new one --> we shift the left element to the right
-                if (current.keyLeft.toString().compareTo(newNode.getKeyLeft().toString()) >= 0) {
+                if (current.compareLeft(newNode) >= 0) {
                     current.setRightElement(current);
                     current.setLeftElement(newNode);
                 }
