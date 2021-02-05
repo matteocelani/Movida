@@ -38,11 +38,11 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig {
 
     MovidaCore() {
         this.dbutils = new DBUtils();
-        this.movies = new ListaCollegataNonOrdinata<>() ;
-        this.people = new ListaCollegataNonOrdinata<>();
+        this.movies = new Alberi23<>() ;
+        this.people = new Alberi23<>();
         this.s = new QuickSort();
 
-        this.test = new Alberi23<>();
+        //this.test = new Alberi23<>();
     }
 
     //Carica i dati da un file, organizzato secondo il formato MOVIDA
@@ -363,8 +363,8 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig {
         MovidaCore prova = new MovidaCore();
         System.out.println("Inizio");
         //Test lettura file
-        prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
-        //prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
+        //prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
+        prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
 
         prova.stampa(prova.movies);
 
@@ -430,12 +430,20 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig {
         prova.people.stampaLista();
 
 
-
+        /**
         //Test Alberi 23
         prova.addAll(prova.movies);
         //Test get Alberi 23
         prova.testGet(prova.movies);
 
+        prova.test.remove("scarface");
+        prova.test.remove("airforceone");
+        prova.test.remove("thefugitive");
+        prova.test.remove("capefear");
+
+
+        prova.testGet(prova.movies);
+        */
 
 
         //Test salva nuovo file

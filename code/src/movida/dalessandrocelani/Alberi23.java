@@ -10,6 +10,7 @@ package movida.dalessandrocelani;
 
 import movida.commons.Movie;
 
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -106,8 +107,8 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         private V getValueLeft(){ return this.valueLeft; }
         private K getKeyRight(){ return this.keyRight; }
         private V getValueRight(){ return this.valueRight; }
-        private Node getLeftElement() { if (this.keyLeft == null && this.keyRight == null) {return null;}else return new Node(this.keyLeft, this.valueLeft); }
-        private Node getRightElement() { if (this.keyLeft == null && this.keyRight == null) {return null;}else return new Node(this.keyRight, this.valueRight); }
+        private Node getLeftElement() { if (this.keyLeft == null && this.valueLeft == null) {return null;}else return new Node(this.keyLeft, this.valueLeft); }
+        private Node getRightElement() { if (this.valueRight == null && this.keyRight == null) {return null;}else return new Node(this.keyRight, this.valueRight); }
 
         //Set Element
         private void setLeftElement(Node element) {
@@ -133,7 +134,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
          * @return true se è una foglia e false altrimenti
          */
         private boolean isLeaf() {
-            return this.left == null && this.mid == null && this.right == null;
+            return left == null && mid == null && right == null;
         }
 
         /**
@@ -144,13 +145,13 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
 
             if (isLeaf()) {
                 balanced = true;
-            } else if (this.left.getLeftElement() != null && mid.getLeftElement() != null) {
-                if (this.keyRight != null) {
-                    if (this.right.getRightElement() != null) {
-                        balanced = true;
-                    } else {
+            } else if (left.getLeftElement() != null && mid.getLeftElement() != null) {
+                if (getRightElement() != null) {
+                    if (right.getLeftElement() != null) {
                         balanced = true;
                     }
+                } else {
+                    balanced = true;
                 }
             }
             return balanced;
@@ -162,15 +163,15 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         private void rebalance() {
 
             while(!isBalanced()) {
-                if (getLeft().getKeyLeft() == null) {
+                if (getLeft().getLeftElement() == null) {
                     getLeft().setLeftElement(getLeftElement());
                     setLeftElement(getMid().getLeftElement());
 
                     if (getMid().getRightElement() != null) {
                         getMid().setLeftElement(getMid().getRightElement());
-                        getMid().setRightElement(null);
+                        getMid().setRightElement(new Node());
                     } else {
-                        getMid().setLeftElement(null);
+                        getMid().setLeftElement(new Node());
                     }
                 } else if (getMid().getLeftElement() == null) {
                     if (getRightElement() == null) {
@@ -185,10 +186,10 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
                             getMid().setLeftElement(getLeftElement());
                             if (getLeft().getRightElement() == null) {
                                 setLeftElement(getLeft().getLeftElement());
-                                getLeft().setLeftElement(null);
+                                getLeft().setLeftElement(new Node());
                             } else {
                                 setLeftElement(getLeft().getRightElement());
-                                getLeft().setRightElement(null);
+                                getLeft().setRightElement(new Node());
                             }
                             if (getLeft().getLeftElement() == null && getMid().getLeftElement() == null) {
                                 setLeft(null);
@@ -201,24 +202,62 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
                         setRightElement(getRight().getLeftElement());
                         if(getRight().getRightElement() != null) {
                             getRight().setLeftElement(getRight().getRightElement());
-                            getRight().setRightElement(null);
+                            getRight().setRightElement(new Node());
                         }
                         else {
-                            getRight().setLeftElement(null);
+                            getRight().setLeftElement(new Node());
                         }
                     }
                 } else if(getRightElement() != null && getRight().getLeftElement() == null) {
                     if(getMid().getRightElement() != null) { // (1)
                         getRight().setLeftElement(getRightElement());
                         setRightElement(getMid().getRightElement());
-                        getMid().setRightElement(null);
+                        getMid().setRightElement(new Node());
                     }
                     else {
                         getMid().setRightElement(getRightElement());
-                        setRightElement(null);
+                        setRightElement(new Node());
                     }
                 }
             }
+        }
+
+        private Node replaceMax() {
+            Node max = new Node();
+
+            if (!isLeaf()) {
+                if (getKeyRight() != null) {
+                    max = right.replaceMax();
+                } else max = mid.replaceMax();
+            } else {
+                if (getKeyRight() != null) {
+                    max.setLeftElement(getRightElement());
+                    setRightElement(new Node());
+                } else {
+                    max.setLeftElement(getLeftElement());
+                    setLeftElement(new Node());
+                }
+            }
+            if (!isBalanced()) rebalance();
+            return max;
+        }
+
+        private Node replaceMin() {
+                Node min = new Node();
+
+                if (!isLeaf()) {
+                    min = left.replaceMin();
+                } else {
+                    min.setLeftElement(getLeftElement());
+                    setLeftElement(new Node());
+
+                    if(getKeyRight() != null) {
+                        setLeftElement(getRightElement());
+                        setRightElement(new Node());
+                    }
+                }
+                if(!isBalanced()) rebalance();
+                return min;
         }
 
         /**
@@ -249,7 +288,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
     }
 
 
-    private Node<K,V> root;
+        private Node<K,V> root;
     private int size;
 
     public Alberi23() {
@@ -282,13 +321,28 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
 
     @Override
     public void remove(K key) {
-
+        boolean deleted;
+        // Decrementiamo size all'inizio,se l'elemento non è stato eliminato lo incrementiamo
+        this.size--;
+        deleted = removeElement(root, key);
+        root.rebalance();
+        if(root.getLeftElement() == null){
+            root = null; // Abbiamo eliminato l'ultimo elemento dell'albero
+        }
+        if(!deleted){
+            this.size++;
+        }
     }
 
     @Override
     public LinkedList<V> values() {
         LinkedList<V> values = new LinkedList<>();
-        return null;
+
+        if (!isEmpty()){
+            iValues(this.root, values);
+        } else return null;
+
+        return values;
     }
 
     @Override
@@ -298,12 +352,19 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
 
     @Override
     public Set<K> keySet() {
-        return null;
+        Set keys = new LinkedHashSet();
+        if (!isEmpty()){
+            iKeySet(this.root, keys);
+        } else return null;
+
+        return keys;
     }
 
     @Override
     public boolean containsKey(K key) {
-        return false;
+        if (!isEmpty()){
+            return iCK(this.root, key);
+        } else return false;
     }
 
     @Override
@@ -341,9 +402,9 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
                         current.setLeft(sonAscended.left);
                     } else { // In this case we have a new split, so the current element in the left will go up
                         // Copio la parte destra del sottoalbero
-                        Node rightCopy = new Node(support(current, false), null, current.mid, current.right);
+                        Node rightCopy = new Node(support(current, false), new Node(), current.mid, current.right);
                         // Creo la nuova struttura attaccando la parte destra
-                        newParent = new Node(support(current, true), null, sonAscended, rightCopy);
+                        newParent = new Node(support(current, true), new Node(), sonAscended, rightCopy);
                     }
                 }
             } else if (current.is2Node() || (current.is3Node() && current.compareRight(newNode) >= 0)) {
@@ -483,5 +544,214 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         }
         return find;
     }
+
+    /**
+     * In a recursive way, the algorithm tries to find the element to delete from the tree.
+     *
+     * When it finds the element, we can have one of this two situations:
+     *
+     *
+     * 		A. The element we have to delete was in the deepest level of the tree, where we know all the rebalance patterns
+     * 			(see the method "rebalance" below implemented in the private class Node) so we will not have many troubles in
+     * 			this case because there are not more levels below of the current one.
+     *
+     * 		B. The element to delete is not in the deepest level of the tree. In this situation we must force a swap.
+     * 		   What we have to do is:
+     *
+     * 		   	- If we are deleting an element in the mid side, we are gonna replace it with the min value of the branch causing
+     * 		   	  an unbalanced case but in the deepest level.
+     *
+     * 		   	- If the element to delete is in the right side of the tree, we replace that element with the max value of
+     * 		   	  the branch. Then, we have a unbalanced case but in the deepest level.
+     *
+     * 			These processes achieves easy rebalance cases, excepting the critical case (full explained in the "rebalance" method):
+     *
+     * 				- If after the deletion of the element a node has been empty and we don't have enough elements in the deepest level
+     * 				  of the tree to rebalance it, the tree will be reorganized from a higher level which increases the cost.
+     *
+     */
+    private boolean removeElement(Node current, K key) {
+        boolean deleted = true;
+        Node newNode = new Node();
+        newNode.keyLeft= key;
+
+        // Siamo sul fondo dell'albero ma non abbiamo trovato l'elemento da eliminare (non esiste)
+        if(current == null){
+            deleted = false;
+        }
+        else {
+            // Caso ricorsivo, stiamo ancora cercando l'elemento da eliminare
+            if(!current.keyLeft.equals(newNode.keyLeft)) {
+                // Se non ci sono elementi a destra (2 Node) o se l'elemento da cancellare è minore dell'elemento a destra
+                if(current.keyRight == null || current.compareRight(newNode) > 0) {
+
+                    // L'elemento a sinistra è maggiore dell'elemento da eliminare, quindi passiamo dal figlio sinistro
+                    if(current.compareLeft(newNode) > 0) {
+                        deleted = removeElement(current.left, key);
+                    }
+                    else { // Altrimenti passiamo dal figlio centrale
+                        deleted = removeElement(current.mid, key);
+                    }
+                }
+                else {
+                    // Se l'elemento da cancellare non è l'elemento di destra, passiamo al figlio destro
+                    if(!current.keyRight.equals(newNode.keyLeft)) {
+                        deleted = removeElement(current.right, key);
+                    }
+                    else { // Altrimenti abbiamo trovato l'elemento
+
+                        // L'elemento da eliminare è un elemento destro di una foglia, quindi dobbiamo solo cancellarla
+                        if(current.isLeaf()){
+                            current.setRightElement(new Node());
+                        }
+                        else { // Troviamo l'elemento ma non è una foglia
+
+                            //Prendiamo l'elemento minore del sottoalbero destro, lo rimuoviamo dalla sua attuale posizione
+                            // e lo inseriamo al posto dell'elemento da cancellare
+                            Node replacement = new Node (current.right.replaceMin(), new Node());
+                            current.setRightElement(replacement);
+                        }
+                    }
+                }
+            }
+            // L'elemento da eliminare è l'elemento sinistro
+            else {
+                if(current.isLeaf()) {
+                    // L'elemento a sinistra, cioè quello da rimuovere, è scambiato con l'elemento di destra
+                    if(current.keyRight != null) {
+                        current.setLeftElement(current.getRightElement());
+                        current.setRightElement(new Node());
+                    }
+                    else { // Se non ci sono elementi a destra, bisogna bilanciare
+                        current.setLeftElement(new Node()); // We let the node empty
+
+                        //Avvisa che un nodo è stato eliminato (è vuoto) ed è necessario il bilanciament in uno specifico livello dell'albero
+                        return true;
+                    }
+                }
+                else {
+                    // Spostiamo l'elemento massimo del sottoalbero sinistro dove troviamo l'elemento da eliminare
+                    Node replacement = new Node(current.left.replaceMax(), new Node());
+                    current.setLeftElement(replacement);
+                }
+            }
+        }
+
+        if(current.keyLeft != null && !current.isBalanced()) {
+            current.rebalance();
+        }
+        else if(current.keyLeft != null && !current.isLeaf()) {
+
+            boolean balanced = false;
+            while(!balanced) {
+                if(current.right == null) {
+
+                    // Critical case of the situation B at the left child
+                    if(current.left.isLeaf() && !current.mid.isLeaf()) {
+
+                        Node replacement = new Node (current.mid.replaceMin(), new Node());
+                        Node readdition= new Node (current.getLeftElement(), new Node());
+
+                        current.setLeftElement(replacement);
+                        put((K) readdition.keyLeft,(V) readdition.valueLeft);
+                        this.size--;
+                        // Critical case of hte situation B at the right child
+                    } else if(!current.left.isLeaf() && current.mid.isLeaf()) {
+
+                        if(current.keyRight == null) {
+
+                            Node replacement = new Node(current.left.replaceMax(), new Node());
+                            Node readdition = new Node(current.getLeftElement(), new Node());
+                            current.setLeftElement(replacement);
+                            put((K) readdition.keyLeft,(V) readdition.valueLeft);
+                            this.size--;
+                        }
+                    }
+                }
+                if(current.right != null) {
+
+                    if(current.mid.isLeaf() && !current.right.isLeaf()) {
+
+                        current.right.rebalance();
+                    }
+                    if(current.mid.isLeaf() && !current.right.isLeaf()) {
+
+                        Node replacement = new Node (current.right.replaceMin(), new Node());
+                        Node readdition = new Node (current.getRightElement(), new Node());
+                        current.setRightElement(replacement);
+                        put((K) readdition.keyLeft,(V) readdition.valueLeft);
+                        this.size--;
+                    }
+                    else balanced = true;
+                }
+                if(current.isBalanced()){
+                    balanced = true;
+                }
+            }
+        }
+        return deleted;
+    }
+
+    private boolean iCK(Node element, K key) {
+        Node x = new Node();
+        x.keyLeft = key;
+        boolean find = false;
+        if(element != null) {
+            if(element.keyLeft != null && element.keyLeft.equals(key)) {
+                find = true;
+            } else {
+                if (element.keyRight != null && element.keyRight.equals(key)) {
+                    find = true;
+                } else {
+                    if (element.compareLeft(x) >= 0) {
+                        find = iCK(element.left, key);
+                    } else if (element.right == null || element.compareRight(x) >= 0){
+                        find = iCK(element.mid, key);
+                    } else if (element.compareRight(x) < 0) {
+                        find = iCK(element.right, key);
+                    }
+                    else return false;
+                }
+            }
+        }
+        return find;
+    }
+
+    private void iValues(Node element, LinkedList<V> values) {
+        if (element != null) {
+            if(element.isLeaf()) {
+                values.add((V) element.getValueLeft());
+                if(element.getRightElement() != null) values.add((V) element.getValueRight());
+            }
+            else {
+                iValues(element.getLeft(), values);
+                values.add((V) element.getValueLeft());
+                iValues(element.getMid(), values);
+                if(element.getRightElement() != null) {
+                    if(!element.isLeaf()) values.add((V) element.getValueRight());
+                    iValues(element.getRight(), values);
+                }
+            }
+        }
+    }
+
+    private void iKeySet(Node element, Set keys) {
+        if (element != null) {
+            if(element.isLeaf()) {
+                keys.add((K) element.getKeyLeft());
+                if(element.getRightElement() != null) keys.add((K) element.getKeyRight());
+            }
+            else {
+                iKeySet(element.getLeft(), keys);
+                keys.add((K) element.getKeyLeft());
+                iKeySet(element.getMid(), keys);
+                if(element.getRightElement() != null) {
+                    if(!element.isLeaf()) keys.add((K) element.getKeyRight());
+                    iKeySet(element.getRight(), keys);
+                }
+            }
+        }
+    }
+
 
 }
