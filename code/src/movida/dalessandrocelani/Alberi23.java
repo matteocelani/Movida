@@ -1,10 +1,6 @@
 package movida.dalessandrocelani;
 
-import movida.commons.Movie;
-
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V> {
 
@@ -150,7 +146,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         }
 
         /**
-         * TODO: Inserire Commenti
+         * TODO: Inserire commenti rebalance()
          */
         private void rebalance() {
 
@@ -214,6 +210,10 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
             }
         }
 
+        /**
+         * TODO: Inserire commenti replaceMax()
+         * @return
+         */
         private Node replaceMax() {
             Node max = new Node();
 
@@ -234,6 +234,10 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
             return max;
         }
 
+        /**
+         * TODO: Inserire commenti replaceMin()
+         * @return
+         */
         private Node replaceMin() {
                 Node min = new Node();
 
@@ -280,7 +284,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
     }
 
 
-        private Node<K,V> root;
+    private Node<K,V> root;
     private int size;
 
     public Alberi23() {
@@ -315,7 +319,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
     public void remove(K key) {
         boolean deleted;
         // Decrementiamo size all'inizio,se l'elemento non è stato eliminato lo incrementiamo
-        this.size--;
+        this.dSize();
         deleted = removeElement(root, key);
         root.rebalance();
         if(root.getLeftElement() == null){
@@ -343,6 +347,9 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
     }
 
     @Override
+    public int dSize() { return this.size--; }
+
+    @Override
     public Set<K> keySet() {
         Set keys = new LinkedHashSet();
         if (!isEmpty()){
@@ -361,7 +368,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
 
 
     /**
-     * TODO: Inserire commenti generali su add element
+     * TODO: Inserire commenti generali su addElement()
      *
      * @param current
      * @param newNode
@@ -372,9 +379,8 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         // Non siamo ancora nel livello più basso dell'albero
         if(current.isLeaf() == false) {
             Node sonAscended = null;
-            if (current.compareLeft(newNode) == 0 ||
-                    (current.is3Node() && current.compareRight(newNode) == 0)) {
-                // L'emento aggiunto già esiste. TODO:AGGIUNGERE UN MESSAGGIO DI ERRORE
+            if (current.compareLeft(newNode) == 0 || (current.is3Node() && current.compareRight(newNode) == 0)) {
+                //NON GESTIAMO QUESTO CASO
             }
             // Il nuovo elemento è minore dell'elemento a sinistra
             else if (current.compareLeft(newNode) >= 0) {
@@ -421,7 +427,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         else { // Siamo al livello più basso dell'albero
             // L'elemento già esiste
             if (current.compareLeft(newNode) == 0 || (current.is3Node() && current.compareRight(newNode) == 0)) {
-                //TODO:AGGIUNGERE MESSAGGIO ERRORE
+                //NON GESTIAMO QUESTO CASO
             }
             else if (current.is2Node()) { // an easy case, there is not a right element
                 // if the current left element is bigger than the new one --> we shift the left element to the right
@@ -521,7 +527,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
                 } else {
                     if (element.compareLeft(x) >= 0) {
                         find = (V) iGet(element.left, key);
-                    } else if (element.right == null || element.compareRight(x) >= 0){
+                    } else if (element.getRightElement() == null || element.compareRight(x) >= 0){
                         find = (V) iGet(element.mid, key);
                     } else if (element.compareRight(x) < 0) {
                         find = (V) iGet(element.right, key);
@@ -534,6 +540,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
     }
 
     /**
+     * TODO: TRADURRE COMMENTO
      * In a recursive way, the algorithm tries to find the element to delete from the tree.
      *
      * When it finds the element, we can have one of this two situations:
@@ -642,7 +649,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
 
                         current.setLeftElement(replacement);
                         put((K) readdition.keyLeft,(V) readdition.valueLeft);
-                        this.size--;
+                        this.dSize();
                         // Critical case of hte situation B at the right child
                     } else if(!current.left.isLeaf() && current.mid.isLeaf()) {
 
@@ -652,7 +659,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
                             Node readdition = new Node(current.getLeftElement(), new Node());
                             current.setLeftElement(replacement);
                             put((K) readdition.keyLeft,(V) readdition.valueLeft);
-                            this.size--;
+                            this.dSize();
                         }
                     }
                 }
@@ -668,7 +675,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
                         Node readdition = new Node (current.getRightElement(), new Node());
                         current.setRightElement(replacement);
                         put((K) readdition.keyLeft,(V) readdition.valueLeft);
-                        this.size--;
+                        this.dSize();
                     }
                     else balanced = true;
                 }
@@ -680,6 +687,12 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         return deleted;
     }
 
+    /**
+     * TODO: INSERIRE COMMENTI iCK()
+     * @param element
+     * @param key
+     * @return
+     */
     private boolean iCK(Node element, K key) {
         Node x = new Node();
         x.keyLeft = key;
@@ -705,6 +718,11 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         return find;
     }
 
+    /**
+     * TODO: INSERIRE COMMENTI iValues()
+     * @param element
+     * @param values
+     */
     private void iValues(Node element, LinkedList<V> values) {
         if (element != null) {
             if(element.isLeaf()) {
@@ -723,6 +741,11 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         }
     }
 
+    /**
+     * TODO: INSERIRE COMMENTI iKeySet()
+     * @param element
+     * @param keys
+     */
     private void iKeySet(Node element, Set keys) {
         if (element != null) {
             if(element.isLeaf()) {

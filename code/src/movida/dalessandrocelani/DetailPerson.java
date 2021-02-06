@@ -1,16 +1,5 @@
 package movida.dalessandrocelani;
 import movida.commons.*;
-/**
- * ************************************************
- * COMMENTI DA ELIMINARE ALLA CONSEGNA
- * ULTIMA MODIFICA: 02/11/2020
- * ************************************************
- *
- *  ************************************************
- *  DATA ULTIMO TEST: MAI TESTATO
- *  BUILD:  02/11/20, 16:32 - Build completed successfully in 1 s 798 ms
- *  ************************************************
- **/
 
 public class DetailPerson extends Person {
 

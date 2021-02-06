@@ -1,19 +1,6 @@
 package movida.dalessandrocelani;
 
-import java.security.Key;
 import java.util.*;
-
-/**
- * ************************************************
- * COMMENTI DA ELIMINARE ALLA CONSEGNA
- * ULTIMA MODIFICA: 18/01/2021
- * ************************************************
- *
- *  ************************************************
- *  DATA ULTIMO TEST: 18/01/2021
- *  BUILD:
- *  ************************************************
- **/
 
 public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
 
@@ -102,7 +89,7 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
          **/
         if (iter != null && key.equals(iter.getKey())) {
             this.start = iter.next;
-            this.size --;
+            this.dSize();
             return;
         }
         /**
@@ -124,10 +111,10 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
         if (iter != null && iter.next.next == null) {
             iter.next.next = null;
             iter.next = iter.next.next;
-            this.size --;
+            this.dSize();
         } else if (iter != null && iter.next.next != null) {
             iter.next = iter.next.next;
-            this.size --;
+            this.dSize();
         }
     }
 
@@ -143,6 +130,17 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
         return values;
     }
 
+    @Override
+    public int size() {
+        return this.size;
+    }
+
+    @Override
+    public int dSize() {
+        return this.size--;
+    }
+
+    @Override
     public Set<K> keySet() {
         Set keys = new LinkedHashSet();
         Node<K,V> iter;
@@ -150,10 +148,5 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
             keys.add((K) iter.getKey());
         }
         return keys;
-    }
-
-    @Override
-    public int size() {
-        return this.size;
     }
 }

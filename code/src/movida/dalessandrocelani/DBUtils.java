@@ -7,20 +7,7 @@ import java.io.FileWriter;
 import java.util.*;
 
 /**
- * ************************************************
- * COMMENTI DA ELIMINARE ALLA CONSEGNA
- * ULTIMA MODIFICA: 18/01/2021
- * ************************************************
- *  In questa classe ci occupiamo del caricamento dei dati da un file dizionario
- *  loadFilm() si occupa di ciò
- *  carica il documento f e analizzando riga per riga,
- *  inizialmente separa i contentuti e cerca solo i campi che ci interessano
- *  salva i campi nell'array di tipo Movie
- *  restitutisce il DB appena creato
- *  ************************************************
- *  DATA ULTIMO TEST: 18/01/2021
- *  BUILD:
- *  ************************************************
+ * TODO: SISTEMARE COMMENTI
  **/
 public class DBUtils {
 

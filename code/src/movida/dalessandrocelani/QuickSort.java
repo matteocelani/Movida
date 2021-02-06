@@ -4,7 +4,7 @@ import movida.commons.Movie;
 
 public class QuickSort implements Sort{
 
-    public void QuickSort(Movie X[], int b, int e) {
+    private void QuickSort(Movie X[], int b, int e) {
         if (b<e) {
             int partitionIndex = this.partition(X, b, e);
 
@@ -13,7 +13,14 @@ public class QuickSort implements Sort{
         }
     }
 
-    int partition(Movie X[], int b, int e) {
+    /**
+     * TODO: INSERIRE COMMENTI partition()
+     * @param X
+     * @param b
+     * @param e
+     * @return
+     */
+    private int partition(Movie X[], int b, int e) {
         Movie pivot = X[e];
         int i = b-1;
 

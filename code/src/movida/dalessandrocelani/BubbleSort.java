@@ -4,7 +4,7 @@ import movida.commons.Movie;
 
 public class BubbleSort implements Sort{
 
-    public void BubbleSort(Movie X[]) {
+    private void BubbleSort(Movie X[]) {
         for (int i = 1; i < X.length; i++) {
             for (int j = 1; j <= X.length - 1; j ++) {
                 if (X[j-1].compareTo(X[j]) > 0 ) {

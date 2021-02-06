@@ -1,20 +1,7 @@
 package movida.dalessandrocelani;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Set;
-
-/**
- * ************************************************
- * COMMENTI DA ELIMINARE ALLA CONSEGNA
- * ULTIMA MODIFICA: 13/01/2021
- * ************************************************
- *
- *  ************************************************
- *  DATA ULTIMO TEST: 13/01/2021
- *  BUILD:
- *  ************************************************
- **/
 
 public interface MovidaDictionary<K,V> {
 
@@ -54,6 +41,13 @@ public interface MovidaDictionary<K,V> {
      * @return numero di nodi presenti
      */
     int size();
+
+    /**
+     * Rimuove un intero alla size
+     *
+     * @return numero di nodi -1
+     */
+    int dSize();
 
     /**
      * @return una vista dell'insieme delle chiavi contenute nel databse
