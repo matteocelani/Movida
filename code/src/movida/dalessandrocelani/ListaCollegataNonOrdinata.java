@@ -30,27 +30,25 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
 
     @Override
     public boolean containsKey(K key) {
-        if (this.start == null) {       //Se la lista è vuota, start==null, allora ritorna false
+        if (this.start == null) {   //Se la lista è vuota, start==null, allora ritorna false
             return false;
-        } else {                    //Altrimenti scannerizzo la lista
+        } else {    //Altrimenti scannerizzo la lista
             Node<K,V> iter;
             for(iter=this.start; iter != null; iter = iter.next){
-                if (key.equals(iter.getKey())) {         //Se la chive in input corrisponde alla chiave del nodo corrente
-                    return true;                         //Ritorna true
+                if (key.equals(iter.getKey())) {    //Se la chive in input corrisponde alla chiave del nodo corrente
+                    return true;
                 }
             }
         }
 
-        return false;            //Caso lista non vuota, ma chiave non presente
+        return false;   //Caso lista non vuota, ma chiave non presente
     }
 
     @Override
     public void put(K key, V value) {
         Node<K,V> newNode = new Node<>(key, value);
 
-        //System.out.print(newNode.getKey() + " - " + newNode.getValue() + "\n" );
-
-        if (this.start == null) {        //Se la lista è vuota, start==null, allora il nostro nodo start punterà direttamente al nodo inserito
+        if (this.start == null) {   //Se la lista è vuota, start==null, allora il nostro nodo start punterà direttamente al nodo inserito
             this.start= newNode;
             this.size++;
             return;
@@ -59,7 +57,6 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
         Node<K,V> iter = start;
         while (iter.next != null) {
             iter = iter.next;
-            //System.out.print(iter.getKey() +" - ");
         }
         newNode.next = null;
         iter.next = newNode;
@@ -67,18 +64,18 @@ public class ListaCollegataNonOrdinata<K,V> implements MovidaDictionary<K,V> {
     }
     @Override
     public V get(K key) {
-        if (this.start == null) {       //Se la lista è vuota, start==null, allora ritorna null
+        if (this.start == null) {   //Se la lista è vuota, start==null, allora ritorna null
             return null;
-        } else {                    //Altrimenti scannerizzo la lista
+        } else {    //Altrimenti scannerizzo la lista
             Node<K,V> iter;
             for(iter=this.start; iter != null; iter = iter.next){
-                if (key.equals(iter.getKey())) {         //Se la chive in input corrisponde alla chiave del nodo corrente
-                    return iter.getValue();     //Ritorna il valore del nodo corrente
+                if (key.equals(iter.getKey())) {    //Se la chive in input corrisponde alla chiave del nodo corrente
+                    return iter.getValue(); //Ritorna il valore del nodo corrente
                 }
             }
         }
 
-        return null;            //Caso lista non vuota, ma chiave non presente
+        return null;    //Caso lista non vuota, ma chiave non presente
     }
 
     @Override

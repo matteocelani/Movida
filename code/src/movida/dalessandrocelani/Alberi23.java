@@ -146,27 +146,39 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         }
 
         /**
-         * TODO: Inserire commenti rebalance()
+         * Ribilancia l'ultimo livello dell'albero, partendo dal livello sopra.
+         *
+         * L'algoritmo cerca di inserire un elemento in ogni figlio, ma c'è un caso speciale in cui dobbiamo bilanciare
+         * l'albero da un livello più alto di quello corrente, eliminando l'ultimo livello.
          */
         private void rebalance() {
 
             while(!isBalanced()) {
-                if (getLeft().getLeftElement() == null) {
+                if (getLeft().getLeftElement() == null) {   //Lo sbilanciamento è nel figlio sinistro
+
+                    //Inseriamo l'elemento di sinistra del nodo corrente come elemento di sinistra del figlio sinistro
                     getLeft().setLeftElement(getLeftElement());
+
+                    //Inseriamo l'elemento a sinistra del figlio centrale come elemento a sinistra del nodo corrente
                     setLeftElement(getMid().getLeftElement());
 
-                    if (getMid().getRightElement() != null) {
+
+                    if (getMid().getRightElement() != null) {   //Se l'elemento a destra del figlio centrale esiste, lo spostiamo a sinistra.
                         getMid().setLeftElement(getMid().getRightElement());
                         getMid().setRightElement(new Node());
-                    } else {
+
+                    } else {    //Altrimento lascio il figlio centrale vuoto, la prossima iterazione risolverà il caso, altrimenti inizia il caso speciale.
                         getMid().setLeftElement(new Node());
                     }
-                } else if (getMid().getLeftElement() == null) {
+                } else if (getMid().getLeftElement() == null) {    // Lo sbilanciamento è nel figlio centrale
+
+                    //Caso speciale, ogni nodo figlio del livello inferiore ha un solo elemento (destro vuoto), l'algoritmo ribilancia dal livello superiore.
                     if (getRightElement() == null) {
                         if (getLeft().getLeftElement() != null && getLeft().getRightElement() == null && getMid().getLeft() == null ) {
                             setRightElement(getLeftElement());
                             setLeftElement(getLeft().getLeftElement());
 
+                            //Rimuovo i figli del nodo corrente
                             setLeft(null);
                             setMid(null);
                             setRight(null);
@@ -180,29 +192,43 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
                                 getLeft().setRightElement(new Node());
                             }
                             if (getLeft().getLeftElement() == null && getMid().getLeftElement() == null) {
+
+                                //Stesso caso speciale
                                 setLeft(null);
                                 setMid(null);
                                 setRight(null);
                             }
                         }
                     } else {
+                        //Metto l'elemento a destra del nodo corrente come elemento a sinistra del figlio centrale
                         getMid().setLeftElement(getRightElement());
+
+                        //Metto l'elemento a sinistra del figlio destro come elemento a destra del nodo corrente
                         setRightElement(getRight().getLeftElement());
+
+                        //Se il figlio destro, da cui abbiamo preso l'elemento sinistro, ha un elemento a destra, lo spostiamo a sinistra dello stesso nodo
                         if(getRight().getRightElement() != null) {
                             getRight().setLeftElement(getRight().getRightElement());
                             getRight().setRightElement(new Node());
                         }
-                        else {
+                        else {  //Oppure lascio il figlio destro vuoto
                             getRight().setLeftElement(new Node());
                         }
                     }
-                } else if(getRightElement() != null && getRight().getLeftElement() == null) {
-                    if(getMid().getRightElement() != null) { // (1)
+                } else if(getRightElement() != null && getRight().getLeftElement() == null) {   // Lo sbilanciamento è nel figlio destro
+                    /** In questo caso possiamo avere due situazioni:
+                     *
+                     *  1. Il figlio centrale è pieno, quindi devo spostare gli elementi a destra.
+                     *
+                     *  2. Il figlio centrale ha solo l'elemento a sinistra, quindi mettiamo l'elemento di
+                     *     destra del nodo corrente come elemento destro del figlio centrale
+                     */
+                    if(getMid().getRightElement() != null) {        // 1
                         getRight().setLeftElement(getRightElement());
                         setRightElement(getMid().getRightElement());
                         getMid().setRightElement(new Node());
                     }
-                    else {
+                    else {                                          // 2
                         getMid().setRightElement(getRightElement());
                         setRightElement(new Node());
                     }
@@ -210,40 +236,38 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
             }
         }
 
-        /**
-         * TODO: Inserire commenti replaceMax()
-         * @return
-         */
         private Node replaceMax() {
             Node max = new Node();
 
-            if (!isLeaf()) {
+            if (!isLeaf()) {    //Caso ricorsivo, non siamo al livello inferiore
                 if (getKeyRight() != null) {
-                    max = right.replaceMax();
-                } else max = mid.replaceMax();
-            } else {
+                    max = right.replaceMax();   // Se c'è un elemento a destra, continuiamo sulla destra
+
+                } else max = mid.replaceMax();  // Altrimenti, continuiamo al centro
+
+            } else {    // Siamo al livello inferiore dell'albero
                 if (getKeyRight() != null) {
                     max.setLeftElement(getRightElement());
                     setRightElement(new Node());
+                    //Non devo ribilanciare niente
+
                 } else {
                     max.setLeftElement(getLeftElement());
                     setLeftElement(new Node());
                 }
             }
-            if (!isBalanced()) rebalance();
+            if (!isBalanced()) rebalance(); //  Bilancia l'albero
             return max;
         }
 
-        /**
-         * TODO: Inserire commenti replaceMin()
-         * @return
-         */
         private Node replaceMin() {
                 Node min = new Node();
 
-                if (!isLeaf()) {
+                if (!isLeaf()) {     // Caso ricorsivo, non siamo al livello inferiore
                     min = left.replaceMin();
-                } else {
+
+                } else {    // Siamo al livello inferiore dell'albero
+
                     min.setLeftElement(getLeftElement());
                     setLeftElement(new Node());
 
@@ -273,7 +297,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         /**
          * Compara la chiave sinistra o destra con una chiave di un nodo preso in imput
          * @param compare nodo con la chiave da comparare
-         * @return TODO: cosa ritorna?? (da sistamare sono stanco e fatto)
+         * @return intero negativo se s1 < s2, 0 se s1 == s2, intero positivo se s1 > s2
          */
         private int compareLeft(Node compare) {
             return this.keyLeft.toString().compareTo(compare.getKeyLeft().toString());
@@ -295,14 +319,14 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
     @Override
     public void put(K key, V value) {
         Node element = new Node(key, value);
-        if(this.root == null || this.root.getLeftElement() == null){ // first case
+        if(this.root == null || this.root.getLeftElement() == null){ // primo caso
             if(this.root == null) {
                 this.root = new Node();
             }
             this.root.setLeftElement(element);
         }
         else {
-            Node newRoot = addElement(this.root, element); // Immersion
+            Node newRoot = addElement(this.root, element);
             if(newRoot != null){
                 this.root = newRoot;
             }
@@ -318,10 +342,10 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
     @Override
     public void remove(K key) {
         boolean deleted;
-        // Decrementiamo size all'inizio,se l'elemento non è stato eliminato lo incrementiamo
-        this.dSize();
+        this.dSize();   // Decrementiamo size all'inizio,se l'elemento non è stato eliminato lo incrementiamo
         deleted = removeElement(root, key);
         root.rebalance();
+
         if(root.getLeftElement() == null){
             root = null; // Abbiamo eliminato l'ultimo elemento dell'albero
         }
@@ -368,7 +392,16 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
 
 
     /**
-     * TODO: Inserire commenti generali su addElement()
+     *  L'algoritmo inserisce i nuovi elementi ordinandoli con la funzione di compareTo(). Quindi l'albero può salvare i dati
+     *  in ordine ascendente o discendente.
+     *  Attraverso la ricorsione, troviamo il livello più basso dell'albero.
+     *
+     *  Se il nuovo elemento deve essere inserito in un nodo con già due elementi (nodo 3), dobbiamo creare un nuovo livello dell'albero
+     *  inserendo il nodo con l'elemento che dovrebbe essere al centro dell'albero.
+     *
+     *  Se il nodo in cui inserisco il nuovo elemento era null, allora avrò un nodo 2, quindi l'elemento di destra è ancora null.
+     *
+     *  Durante il processo viene controllato se l'albero è bilanciato, altrimenti viene ribilanciato.
      *
      * @param current
      * @param newNode
@@ -376,17 +409,18 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
      */
     private Node addElement(Node current, Node newNode) {
         Node newParent = null;
-        // Non siamo ancora nel livello più basso dell'albero
-        if(current.isLeaf() == false) {
+
+        if(current.isLeaf() == false) { // Non siamo ancora nel livello più basso dell'albero
             Node sonAscended = null;
             if (current.compareLeft(newNode) == 0 || (current.is3Node() && current.compareRight(newNode) == 0)) {
                 //NON GESTIAMO QUESTO CASO
             }
-            // Il nuovo elemento è minore dell'elemento a sinistra
-            else if (current.compareLeft(newNode) >= 0) {
+            else if (current.compareLeft(newNode) >= 0) {   // Il nuovo elemento è minore dell'elemento a sinistra
+
                 sonAscended = addElement(current.left, newNode);
-                // Case sonAscended != null --> L'elemento è stato aggiunto a un Nodo 3 (ci sono due elementi)
-                if (sonAscended != null) { // A new node comes from the left branch
+
+                if (sonAscended != null) {  // Caso sonAscended != null --> L'elemento è stato aggiunto a un Nodo 3
+
                     // Il nuovo elemento, in questo caso, è sempre minore rispetto a current.left
                     if (current.is2Node()) {
                         current.setRightElement(current);   // sposto l'elemento a sinistra di current a destra
@@ -394,23 +428,26 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
                         current.setRight(current.mid);
                         current.setMid(sonAscended.mid);
                         current.setLeft(sonAscended.left);
-                    } else { // In this case we have a new split, so the current element in the left will go up
+
+                    } else {
                         // Copio la parte destra del sottoalbero
                         Node rightCopy = new Node(support(current, false), new Node(), current.mid, current.right);
+
                         // Creo la nuova struttura attaccando la parte destra
                         newParent = new Node(support(current, true), new Node(), sonAscended, rightCopy);
                     }
                 }
             } else if (current.is2Node() || (current.is3Node() && current.compareRight(newNode) >= 0)) {
                     sonAscended = addElement(current.mid, newNode);
-                    if (sonAscended != null) { // A new split
-                        // The right element is empty, so we can set the ascended element in the left and the existing left element into the right
+                    if (sonAscended != null) {
+
+                        // L'elemento a destra è vuoto, quindi posso inserire l'elemento ascendente a sinistra e spostare l'attuale elemento sinistro a destra
                         if (current.is2Node()) {
                             current.setRightElement(sonAscended);
                             current.setRight(sonAscended.mid);
                             current.setMid(sonAscended.left);
                         }
-                        else { // Another case we have to split again
+                        else {
                             Node left = new Node(support(current, true), new Node(), current.left, sonAscended.left);
                             Node mid = new Node(support(current, false), new Node(), sonAscended.mid, current.right);
                             newParent = new Node(support(sonAscended, true), new Node(), left, mid);
@@ -418,37 +455,40 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
                     }
             } else if (current.is3Node() && current.compareRight(newNode) < 0) {
                     sonAscended = addElement(current.right, newNode);
-                    if (sonAscended != null) { // Split, the right element goes up
+                    if (sonAscended != null) {
+
                         Node leftCopy   = new Node(support(current, true), new Node(), current.left, current.mid);
                         newParent       = new Node(support(current, false), new Node(), leftCopy, sonAscended);
                     }
             }
         }
         else { // Siamo al livello più basso dell'albero
-            // L'elemento già esiste
-            if (current.compareLeft(newNode) == 0 || (current.is3Node() && current.compareRight(newNode) == 0)) {
+            if (current.compareLeft(newNode) == 0 || (current.is3Node() && current.compareRight(newNode) == 0)) {// L'elemento già esiste
                 //NON GESTIAMO QUESTO CASO
             }
-            else if (current.is2Node()) { // an easy case, there is not a right element
-                // if the current left element is bigger than the new one --> we shift the left element to the right
+
+            else if (current.is2Node()) { //Non c'è l'elemento a destra
+
+                // Se l'elemento a sinistra del nodo corrente è maggiore del nuovo --> spostiamo l'elemento sinistro a destra
                 if (current.compareLeft(newNode) >= 0) {
                     current.setRightElement(current);
                     current.setLeftElement(newNode);
                 }
-                // if the new element is bigger, we add it in the right directly
+                // Se il nuovo elemento è maggiore, lo aggiungiamo a destra
                 else if (current.compareLeft(newNode) < 0){
                     current.setRightElement(newNode);
                 }
             }
-            // Case 3-node: there are 2 elements in the node and we want to add another one. We have to split the node
+            // Caso nodo 3: ci sono due elementi nel nodo, e vogliamo aggiungerne un altro. Quindi facciamo lo split del nodo
             else newParent = split(current, newNode);
         }
         return newParent;
     }
 
     /**
-     * Funzione che prende in imput un nodo con due elementi e li separa
-     * TODO:Finire di scrivere commenti
+     * Prende in imput un nodo con due elementi e un nuovo elemento da inserire, e separa il nodo
+     * creando la nuova struttura da collegare all'albero durande la funzione addElement()
+     *
      * @param current
      * @param insert
      * @return
@@ -456,15 +496,15 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
     public Node split(Node current, Node insert) {
         Node newNode = new Node();
 
-        //L'elemento di sinistra è maggiore, quindi salirà lasciando l'elemento nuovo sulla sinistra
-        if(current.compareLeft(insert) >= 0){
+
+        if(current.compareLeft(insert) >= 0){   //L'elemento di sinistra è maggiore, quindi salirà lasciando l'elemento nuovo sulla sinistra
             Node left = new Node(insert, new Node());
             Node right = new Node(support(current, false), new Node());
             newNode = new Node(support(current, true), new Node(), left, right);
 
         } else if(current.compareLeft(insert) < 0){
 
-            //Il nuovo elemento è maggiore rispetto all'elemento destro di current, ma minore rispetto l'elemento a destra. Il nuovo elemento va su.
+            //Il nuovo elemento è maggiore rispetto all'elemento destro di current
             if(current.compareRight(insert) >= 0){
                 Node left = new Node(support(current, true), new Node());
                 Node right = new Node(support(current, false), new Node());
@@ -539,31 +579,27 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
         return find;
     }
 
-    /**
-     * TODO: TRADURRE COMMENTO
-     * In a recursive way, the algorithm tries to find the element to delete from the tree.
+    /** RIMOZIONE ELEMENTO ALBERI 2-3:
      *
-     * When it finds the element, we can have one of this two situations:
+     * L'algoritmo cerca l'elemento da eliminare in modo ricorsivo.
+     * Quando trova l'elemento richiesto, ci troviamo in una delle due situazioni:
      *
+     *      A. L'elemento che vogliamo cancellare si trova al livello più basso dell'albero. In questo caso non abbiamo molti problemi
+     *          perchè non ci sono altri livelli sotto al nodo corrente. Quindi basta ribilanciare (rebalance()) l'albero.
      *
-     * 		A. The element we have to delete was in the deepest level of the tree, where we know all the rebalance patterns
-     * 			(see the method "rebalance" below implemented in the private class Node) so we will not have many troubles in
-     * 			this case because there are not more levels below of the current one.
+     *      B. L'elemento da eliminare non si trova al livello più basso dell'albero. In questa situazione dobbiamo forzare uno swap.
+     *          Ecco cosa facciamo:
      *
-     * 		B. The element to delete is not in the deepest level of the tree. In this situation we must force a swap.
-     * 		   What we have to do is:
+     *          - Se stiamo cancellando un elemento nella parte centrale dell'albero, lo rimpiazzeremo con il nodo con la chiave minore
+     *            del sottoalbero. Questo causerà uno sbilanciamento nel livello inferiore dell'albero.
      *
-     * 		   	- If we are deleting an element in the mid side, we are gonna replace it with the min value of the branch causing
-     * 		   	  an unbalanced case but in the deepest level.
+     * 		   	- Se l'elemento da eliminare è nella parte destra dell'albero, lo rimpiazzeremo con il nodo con chiave maggiore del
+     * 		      sottoalbero. Quindi avremo uno sbilanciamento nel livello inferiore dell'albero.
      *
-     * 		   	- If the element to delete is in the right side of the tree, we replace that element with the max value of
-     * 		   	  the branch. Then, we have a unbalanced case but in the deepest level.
+     * 		   Questi processi presentano dei casi semplici di bilanciamento, eccetto per un caso speciale:
      *
-     * 			These processes achieves easy rebalance cases, excepting the critical case (full explained in the "rebalance" method):
-     *
-     * 				- If after the deletion of the element a node has been empty and we don't have enough elements in the deepest level
-     * 				  of the tree to rebalance it, the tree will be reorganized from a higher level which increases the cost.
-     *
+     * 		        - Se dopo la cancellazione di un elemento un nodo è vuoto e non abbiamo abbastanza elementi al livello più basso per
+     * 				  bilanciare l'albero, questo verrà riorganizzato a partire da un livello più alto del nodo corrente (aumenta il costo).
      */
     private boolean removeElement(Node current, K key) {
         boolean deleted = true;
@@ -641,7 +677,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
             while(!balanced) {
                 if(current.right == null) {
 
-                    // Critical case of the situation B at the left child
+                    //caso speciale della situazione B (nel figlio sinistro)
                     if(current.left.isLeaf() && !current.mid.isLeaf()) {
 
                         Node replacement = new Node (current.mid.replaceMin(), new Node());
@@ -650,7 +686,7 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
                         current.setLeftElement(replacement);
                         put((K) readdition.keyLeft,(V) readdition.valueLeft);
                         this.dSize();
-                        // Critical case of hte situation B at the right child
+                        //caso speciale della situazione B (nel figlio destro)
                     } else if(!current.left.isLeaf() && current.mid.isLeaf()) {
 
                         if(current.keyRight == null) {

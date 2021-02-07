@@ -14,7 +14,13 @@ public class QuickSort implements Sort{
     }
 
     /**
-     * TODO: INSERIRE COMMENTI partition()
+     * Questa funzione prende il pivot come ultimo elemento. Quindi, controlla ogni elemento e lo scambia
+     * prima del pivot se il suo valore è inferiore.
+     *
+     * Alla fine del partizionamento, tutti gli elementi minori del pivot si trovano a sinistra di esso e tutti gli elementi
+     * più grandi del pivot si trovano a destra di esso.
+     * Il pivot si trova nella sua posizione ordinata finale e la funzione restituisce questa posizione.
+     *
      * @param X
      * @param b
      * @param e
