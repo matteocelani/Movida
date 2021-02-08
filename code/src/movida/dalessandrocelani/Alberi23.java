@@ -403,9 +403,9 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
      *
      *  Durante il processo viene controllato se l'albero è bilanciato, altrimenti viene ribilanciato.
      *
-     * @param current
-     * @param newNode
-     * @return
+     * @param current la struttura a cui ci stiamo riferendo
+     * @param newNode il nuovo nodo da inserire
+     * @return l'albero con il nuovo nodo aggiunto e bilanciato
      */
     private Node addElement(Node current, Node newNode) {
         Node newParent = null;
@@ -489,9 +489,9 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
      * Prende in imput un nodo con due elementi e un nuovo elemento da inserire, e separa il nodo
      * creando la nuova struttura da collegare all'albero durande la funzione addElement()
      *
-     * @param current
-     * @param insert
-     * @return
+     * @param current il nodo da splittare
+     * @param insert il nodo da inserire
+     * @return la nuova stuttura, bilanciata
      */
     public Node split(Node current, Node insert) {
         Node newNode = new Node();
@@ -548,11 +548,12 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
     }
 
     /**
-     * TODO: commento
+     * Funzione di supporto per get()
+     * Entra ricorsivamente nell'albero alla ricerca del nodo giusto
      *
-     * @param element
-     * @param key
-     * @return
+     * @param element prende in input l'albero
+     * @param key è la key che dobbiamo cercare
+     * @return il valore V, se esiste, associato alla key
      */
     private V iGet(Node element, K key) {
         Node x = new Node();
@@ -724,10 +725,12 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
     }
 
     /**
-     * TODO: INSERIRE COMMENTI iCK()
-     * @param element
-     * @param key
-     * @return
+     * Funzione di supporto per containsKey()
+     * entra in ricorsione nell'albero alla cerca della chiave corrispondente
+     *
+     * @param element prende in input l'albero
+     * @param key è la key che dobbiamo cercare
+     * @return true se la key è presente nell'albero, false altrimenti
      */
     private boolean iCK(Node element, K key) {
         Node x = new Node();
@@ -755,9 +758,12 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
     }
 
     /**
-     * TODO: INSERIRE COMMENTI iValues()
-     * @param element
-     * @param values
+     * Funzione di supporto per values()
+     * entra ricorsivamente nell'albero e inserisce tutti i dati presenti nell'albero
+     * in una LinkedList<V>
+     *
+     * @param element prende in input l'albero
+     * @param values la linked lista dove inserire i valori dell'albero
      */
     private void iValues(Node element, LinkedList<V> values) {
         if (element != null) {
@@ -778,9 +784,12 @@ public class Alberi23<K extends Comparable<K>,V> implements MovidaDictionary<K,V
     }
 
     /**
-     * TODO: INSERIRE COMMENTI iKeySet()
-     * @param element
-     * @param keys
+     * Funzione di supporto per keySet()
+     * entra in ricorsione nell'albero e inserisce tutte le key
+     * in un Set di key
+     *
+     * @param element prende in input l'albero
+     * @param keys il set di key da riempire con le key
      */
     private void iKeySet(Node element, Set keys) {
         if (element != null) {

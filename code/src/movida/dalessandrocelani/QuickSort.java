@@ -2,7 +2,7 @@ package movida.dalessandrocelani;
 
 import movida.commons.Movie;
 
-public class QuickSort implements Sort{
+public class QuickSort implements MovidaSort{
 
     private void QuickSort(Movie X[], int b, int e) {
         if (b<e) {
@@ -47,7 +47,7 @@ public class QuickSort implements Sort{
     }
 
     @Override
-    public MovidaDictionary sort(MovidaDictionary<String, Movie> m) {
+    public MovidaDictionary MovidaSort(MovidaDictionary<String, Movie> m) {
 
         Movie[] x = m.values().toArray(new Movie[0]);
         this.QuickSort(x, 0, x.length-1);

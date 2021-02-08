@@ -2,7 +2,7 @@ package movida.dalessandrocelani;
 
 import movida.commons.Movie;
 
-public class BubbleSort implements Sort{
+public class BubbleSort implements MovidaSort{
 
     private void BubbleSort(Movie X[]) {
         for (int i = 1; i < X.length; i++) {
@@ -17,7 +17,7 @@ public class BubbleSort implements Sort{
     }
 
     @Override
-    public MovidaDictionary sort(MovidaDictionary<String, Movie> m) {
+    public MovidaDictionary MovidaSort(MovidaDictionary<String, Movie> m) {
 
         Movie[] x = m.values().toArray(new Movie[0]);
         this.BubbleSort(x);

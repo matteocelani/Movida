@@ -9,7 +9,7 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig, IMov
     private DBUtils dbutils;
     private MovidaDictionary<String, Movie> movies;
     private MovidaDictionary<String, DetailPerson> people;
-    private Sort s;
+    private MovidaSort s;
     private MovidaGraph collaboration;
 
     /**
@@ -301,19 +301,19 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig, IMov
     public boolean setSort(SortingAlgorithm a) {
         if( a == SortingAlgorithm.BubbleSort){
             this.s = new BubbleSort();
-            this.movies = s.sort(this.movies);
+            this.movies = s.MovidaSort(this.movies);
             System.out.print("Algoritmo di ordinamento trovato.\n");
             System.out.print("I Movie sono stati ordinati usando Bubble Sort.\n");
             return true;
         } else if( a == SortingAlgorithm.QuickSort){
             this.s = new QuickSort();
-            this.movies = s.sort(this.movies);
+            this.movies = s.MovidaSort(this.movies);
             System.out.print("Algoritmo di ordinamento trovato.\n");
             System.out.print("I Movie sono stati ordinati usando QuickSort.\n");
             return true;
         } else{
             this.s = new QuickSort();
-            this.movies = s.sort(this.movies);
+            this.movies = s.MovidaSort(this.movies);
             System.out.print("Algoritmo di ordinamento non trovato. \n");
             System.out.print("Algoritmo di ordinamento di default: QuickSort.\n");
         }
@@ -392,8 +392,8 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig, IMov
         System.out.println("Inizio\n");
         System.out.println("--------------------------------------------------------- ");
         //Test lettura file
-        //prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
-        prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
+        prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
+        //prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
 
         prova.stampa(prova.movies);
 
@@ -491,8 +491,8 @@ public class MovidaCore implements IMovidaDB, IMovidaSearch, IMovidaConfig, IMov
         prova.setMap(n);
         System.out.println("Inizio Test Funzioni Alberi");
         //Test lettura file
-        //prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
-        prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
+        prova.loadFromFile(new File("/Users/matteocelani/Documents/GitHub/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
+        //prova.loadFromFile(new File("/home/francesco/IdeaProjects/Movida/code/src/movida/commons/esempio-formato-daticopia.txt"));
 
         prova.stampa(prova.movies);
 
